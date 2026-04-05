@@ -1,7 +1,7 @@
 use crate::error::BranchError;
 use crate::ops::branch::{
-    build_current_command, parse_create_output, parse_current_output, parse_delete_output,
-    parse_list_output, parse_rename_output,
+    build_current_command, parse_create_output, parse_current_output, parse_delete_output, parse_list_output,
+    parse_rename_output,
 };
 use crate::ops::{BranchBuilder, BranchCreateBuilder, BranchDeleteBuilder, BranchListBuilder, BranchRenameBuilder};
 use crate::types::BranchInfo;

@@ -20,20 +20,12 @@ impl<'a> CheckoutBuilder<'a> {
 
     /// Checkout an existing branch.
     pub fn branch(self, name: impl Into<String>) -> CheckoutBranchBuilder<'a> {
-        CheckoutBranchBuilder {
-            repo_path: self.repo_path,
-            name: name.into(),
-            create: false,
-        }
+        CheckoutBranchBuilder { repo_path: self.repo_path, name: name.into(), create: false }
     }
 
     /// Create and checkout a new branch.
     pub fn new_branch(self, name: impl Into<String>) -> CheckoutBranchBuilder<'a> {
-        CheckoutBranchBuilder {
-            repo_path: self.repo_path,
-            name: name.into(),
-            create: true,
-        }
+        CheckoutBranchBuilder { repo_path: self.repo_path, name: name.into(), create: true }
     }
 }
 
@@ -45,10 +37,7 @@ pub struct CheckoutBranchBuilder<'a> {
 
 impl<'a> CheckoutBranchBuilder<'a> {
     pub(crate) fn build_command(&self) -> ShellCommand {
-        let mut cmd = ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("checkout");
+        let mut cmd = ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("checkout");
 
         if self.create {
             cmd = cmd.arg("-b");
@@ -75,24 +64,16 @@ pub(crate) fn parse_checkout_output(output: &Output, name: &str, create: bool) -
     let lower = stderr.to_lowercase();
 
     if lower.contains("did not match") || lower.contains("pathspec") && lower.contains("did not match") {
-        return Err(CheckoutError::RefNotFound {
-            reference: name.to_string(),
-        });
+        return Err(CheckoutError::RefNotFound { reference: name.to_string() });
     }
 
     if lower.contains("already exists") {
-        return Err(CheckoutError::BranchAlreadyExists {
-            name: name.to_string(),
-        });
+        return Err(CheckoutError::BranchAlreadyExists { name: name.to_string() });
     }
 
     if lower.contains("overwritten by checkout") || lower.contains("uncommitted changes") {
         // Try to extract file names from the error message
-        let files: Vec<String> = stderr
-            .lines()
-            .filter(|l| l.starts_with('\t'))
-            .map(|l| l.trim().to_string())
-            .collect();
+        let files: Vec<String> = stderr.lines().filter(|l| l.starts_with('\t')).map(|l| l.trim().to_string()).collect();
         return Err(CheckoutError::UncommittedChanges { files });
     }
 

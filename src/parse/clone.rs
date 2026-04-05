@@ -12,10 +12,7 @@ use crate::run::stderr_string;
 /// since git clone's output doesn't reliably contain all that info.
 ///
 /// On failure, maps stderr patterns to typed `CloneError` variants.
-pub fn parse_clone_output(
-    output: &Output,
-    url: &str,
-) -> Result<(), CloneError> {
+pub fn parse_clone_output(output: &Output, url: &str) -> Result<(), CloneError> {
     if output.status.success() {
         return Ok(());
     }
@@ -41,50 +38,33 @@ pub fn branch_detect_command(dest: &std::path::Path) -> cmd_spec::ShellCommand {
 /// Parse the output of the branch detection command.
 /// Returns the branch name, or "HEAD" as fallback for detached HEAD.
 pub fn parse_branch_detect(output: &Output) -> String {
-    if output.status.success() {
-        crate::run::stdout_string(output)
-    } else {
-        "HEAD".to_string()
-    }
+    if output.status.success() { crate::run::stdout_string(output) } else { "HEAD".to_string() }
 }
 
 /// Map stderr content to a specific `CloneError` variant.
 fn classify_clone_error(stderr: &str, url: &str, code: i32) -> Result<(), CloneError> {
     if stderr.contains("already exists and is not an empty directory") {
         // Extract path from: fatal: destination path 'foo' already exists ...
-        let path = extract_destination_path(stderr)
-            .unwrap_or_else(|| url.into());
-        return Err(CloneError::DestinationExists {
-            path: path.into(),
-        });
+        let path = extract_destination_path(stderr).unwrap_or_else(|| url.into());
+        return Err(CloneError::DestinationExists { path: path.into() });
     }
 
     // BranchNotFound must be checked before the generic "not found" pattern
     if stderr.contains("Remote branch") && stderr.contains("not found") {
         let branch = extract_branch_name(stderr).unwrap_or_default();
-        return Err(CloneError::BranchNotFound {
-            url: url.to_string(),
-            branch,
-        });
+        return Err(CloneError::BranchNotFound { url: url.to_string(), branch });
     }
 
     if stderr.contains("not found") || stderr.contains("does not appear to be a git repository") {
-        return Err(CloneError::RepoNotFound {
-            url: url.to_string(),
-        });
+        return Err(CloneError::RepoNotFound { url: url.to_string() });
     }
 
     if stderr.contains("Authentication failed") || stderr.contains("could not read Username") {
-        return Err(CloneError::AuthFailed {
-            url: url.to_string(),
-        });
+        return Err(CloneError::AuthFailed { url: url.to_string() });
     }
 
     if stderr.contains("Could not resolve host") || stderr.contains("unable to access") {
-        return Err(CloneError::Network {
-            url: url.to_string(),
-            reason: stderr.to_string(),
-        });
+        return Err(CloneError::Network { url: url.to_string(), reason: stderr.to_string() });
     }
 
     Err(CloneError::Command(CommandError::Failed {
@@ -111,9 +91,9 @@ fn extract_branch_name(stderr: &str) -> Option<String> {
     let marker = "Remote branch ";
     let start = stderr.find(marker)? + marker.len();
     let rest = &stderr[start..];
-    if rest.starts_with('\'') {
-        let end = rest[1..].find('\'')?;
-        Some(rest[1..1 + end].to_string())
+    if let Some(stripped) = rest.strip_prefix('\'') {
+        let end = stripped.find('\'')?;
+        Some(stripped[..end].to_string())
     } else {
         let end = rest.find(' ')?;
         Some(rest[..end].to_string())
@@ -171,11 +151,7 @@ mod tests {
 
     #[test]
     fn classify_unknown_falls_through() {
-        let err = classify_clone_error(
-            "fatal: something unexpected happened",
-            "https://github.com/user/repo.git",
-            1,
-        );
+        let err = classify_clone_error("fatal: something unexpected happened", "https://github.com/user/repo.git", 1);
         assert!(matches!(err, Err(CloneError::Command(_))));
     }
 

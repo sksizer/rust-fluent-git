@@ -1,6 +1,6 @@
 use crate::error::RevParseError;
-use crate::ops::rev_parse::parse_rev_parse_output;
 use crate::ops::RevParseBuilder;
+use crate::ops::rev_parse::parse_rev_parse_output;
 
 #[cfg(not(feature = "blocking"))]
 impl<'a> RevParseBuilder<'a> {

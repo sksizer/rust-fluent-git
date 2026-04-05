@@ -1,6 +1,6 @@
 use crate::error::DiffError;
-use crate::ops::diff::{build_diff_result, check_diff_errors, parse_numstat_output};
 use crate::ops::DiffBuilder;
+use crate::ops::diff::{build_diff_result, check_diff_errors, parse_numstat_output};
 use crate::types::DiffResult;
 
 #[cfg(not(feature = "blocking"))]

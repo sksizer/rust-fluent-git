@@ -5,7 +5,7 @@ use std::process::Output;
 
 use cmd_spec::ShellCommand;
 
-use crate::error::{RemoteError, CommandError};
+use crate::error::{CommandError, RemoteError};
 use crate::run::{stderr_string, stdout_string};
 use crate::types::RemoteInfo;
 
@@ -21,26 +21,17 @@ impl<'a> RemoteBuilder<'a> {
 
     /// Add a new remote.
     pub fn add(self, name: impl Into<String>, url: impl Into<String>) -> RemoteAddBuilder<'a> {
-        RemoteAddBuilder {
-            repo_path: self.repo_path,
-            name: name.into(),
-            url: url.into(),
-        }
+        RemoteAddBuilder { repo_path: self.repo_path, name: name.into(), url: url.into() }
     }
 
     /// Remove an existing remote.
     pub fn remove(self, name: impl Into<String>) -> RemoteRemoveBuilder<'a> {
-        RemoteRemoveBuilder {
-            repo_path: self.repo_path,
-            name: name.into(),
-        }
+        RemoteRemoveBuilder { repo_path: self.repo_path, name: name.into() }
     }
 
     /// List all remotes.
     pub fn list(self) -> RemoteListBuilder<'a> {
-        RemoteListBuilder {
-            repo_path: self.repo_path,
-        }
+        RemoteListBuilder { repo_path: self.repo_path }
     }
 }
 
@@ -77,9 +68,7 @@ pub(crate) fn parse_add_output(output: &Output, name: &str) -> Result<(), Remote
     let lower = stderr.to_lowercase();
 
     if lower.contains("already exists") {
-        return Err(RemoteError::AlreadyExists {
-            name: name.to_string(),
-        });
+        return Err(RemoteError::AlreadyExists { name: name.to_string() });
     }
 
     Err(RemoteError::Command(CommandError::Failed {
@@ -121,9 +110,7 @@ pub(crate) fn parse_remove_output(output: &Output, name: &str) -> Result<(), Rem
     let lower = stderr.to_lowercase();
 
     if lower.contains("no such remote") || lower.contains("not found") {
-        return Err(RemoteError::NotFound {
-            name: name.to_string(),
-        });
+        return Err(RemoteError::NotFound { name: name.to_string() });
     }
 
     Err(RemoteError::Command(CommandError::Failed {
@@ -142,11 +129,7 @@ pub struct RemoteListBuilder<'a> {
 
 impl<'a> RemoteListBuilder<'a> {
     pub(crate) fn build_command(&self) -> ShellCommand {
-        ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("remote")
-            .arg("-v")
+        ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("remote").arg("-v")
     }
 }
 
@@ -187,16 +170,8 @@ pub(crate) fn parse_list_output(output: &Output) -> Result<Vec<RemoteInfo>, Remo
                 existing.push_url = url;
             }
         } else {
-            let (fetch_url, push_url) = if kind == "(fetch)" {
-                (url, String::new())
-            } else {
-                (String::new(), url)
-            };
-            remotes.push(RemoteInfo {
-                name,
-                fetch_url,
-                push_url,
-            });
+            let (fetch_url, push_url) = if kind == "(fetch)" { (url, String::new()) } else { (String::new(), url) };
+            remotes.push(RemoteInfo { name, fetch_url, push_url });
         }
     }
 

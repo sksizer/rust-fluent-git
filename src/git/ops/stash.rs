@@ -1,6 +1,6 @@
 use crate::error::StashError;
-use crate::ops::stash::{parse_push_output, parse_pop_output, parse_list_output};
-use crate::ops::{StashPushBuilder, StashPopBuilder, StashListBuilder};
+use crate::ops::stash::{parse_list_output, parse_pop_output, parse_push_output};
+use crate::ops::{StashListBuilder, StashPopBuilder, StashPushBuilder};
 use crate::types::StashEntry;
 
 #[cfg(not(feature = "blocking"))]

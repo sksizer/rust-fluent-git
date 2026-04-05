@@ -1,6 +1,6 @@
 use crate::error::LogError;
-use crate::ops::log::parse_log_output;
 use crate::ops::LogBuilder;
+use crate::ops::log::parse_log_output;
 use crate::types::LogEntry;
 
 #[cfg(not(feature = "blocking"))]

@@ -5,7 +5,7 @@ use std::process::Output;
 
 use cmd_spec::ShellCommand;
 
-use crate::error::{StashError, CommandError};
+use crate::error::{CommandError, StashError};
 use crate::run::{stderr_string, stdout_string};
 use crate::types::StashEntry;
 
@@ -21,25 +21,17 @@ impl<'a> StashBuilder<'a> {
 
     /// Push changes onto the stash.
     pub fn push(self) -> StashPushBuilder<'a> {
-        StashPushBuilder {
-            repo_path: self.repo_path,
-            message: None,
-            include_untracked: false,
-        }
+        StashPushBuilder { repo_path: self.repo_path, message: None, include_untracked: false }
     }
 
     /// Pop the top stash entry.
     pub fn pop(self) -> StashPopBuilder<'a> {
-        StashPopBuilder {
-            repo_path: self.repo_path,
-        }
+        StashPopBuilder { repo_path: self.repo_path }
     }
 
     /// List all stash entries.
     pub fn list(self) -> StashListBuilder<'a> {
-        StashListBuilder {
-            repo_path: self.repo_path,
-        }
+        StashListBuilder { repo_path: self.repo_path }
     }
 }
 
@@ -65,11 +57,8 @@ impl<'a> StashPushBuilder<'a> {
     }
 
     pub(crate) fn build_command(&self) -> ShellCommand {
-        let mut cmd = ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("stash")
-            .arg("push");
+        let mut cmd =
+            ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("stash").arg("push");
 
         if let Some(ref msg) = self.message {
             cmd = cmd.arg("-m").arg(msg.as_str());
@@ -115,11 +104,7 @@ pub struct StashPopBuilder<'a> {
 
 impl<'a> StashPopBuilder<'a> {
     pub(crate) fn build_command(&self) -> ShellCommand {
-        ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("stash")
-            .arg("pop")
+        ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("stash").arg("pop")
     }
 }
 
@@ -136,10 +121,7 @@ pub(crate) fn parse_pop_output(output: &Output) -> Result<(), StashError> {
     }
 
     if lower.contains("conflict") {
-        return Err(StashError::ApplyConflict {
-            index: 0,
-            files: Vec::new(),
-        });
+        return Err(StashError::ApplyConflict { index: 0, files: Vec::new() });
     }
 
     Err(StashError::Command(CommandError::Failed {
@@ -158,11 +140,7 @@ pub struct StashListBuilder<'a> {
 
 impl<'a> StashListBuilder<'a> {
     pub(crate) fn build_command(&self) -> ShellCommand {
-        ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("stash")
-            .arg("list")
+        ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("stash").arg("list")
     }
 }
 
@@ -199,28 +177,18 @@ pub(crate) fn parse_list_output(output: &Output) -> Result<Vec<StashEntry>, Stas
         };
 
         // Everything after "}: "
-        let rest = if let Some(pos) = line.find("}: ") {
-            &line[pos + 3..]
-        } else {
-            ""
-        };
+        let rest = if let Some(pos) = line.find("}: ") { &line[pos + 3..] } else { "" };
 
         // Parse branch and message from "On branch_name: message" or "WIP on branch_name: sha message"
         let (branch, message) = if let Some(stripped) = rest.strip_prefix("On ") {
             if let Some(colon_pos) = stripped.find(": ") {
-                (
-                    stripped[..colon_pos].to_string(),
-                    stripped[colon_pos + 2..].to_string(),
-                )
+                (stripped[..colon_pos].to_string(), stripped[colon_pos + 2..].to_string())
             } else {
                 (stripped.to_string(), String::new())
             }
         } else if let Some(stripped) = rest.strip_prefix("WIP on ") {
             if let Some(colon_pos) = stripped.find(": ") {
-                (
-                    stripped[..colon_pos].to_string(),
-                    stripped[colon_pos + 2..].to_string(),
-                )
+                (stripped[..colon_pos].to_string(), stripped[colon_pos + 2..].to_string())
             } else {
                 (stripped.to_string(), String::new())
             }
@@ -228,11 +196,7 @@ pub(crate) fn parse_list_output(output: &Output) -> Result<Vec<StashEntry>, Stas
             (String::new(), rest.to_string())
         };
 
-        entries.push(StashEntry {
-            index,
-            message,
-            branch,
-        });
+        entries.push(StashEntry { index, message, branch });
     }
 
     Ok(entries)

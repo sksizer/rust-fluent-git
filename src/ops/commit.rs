@@ -5,7 +5,7 @@ use std::process::Output;
 
 use cmd_spec::ShellCommand;
 
-use crate::error::{CommitError, CommandError};
+use crate::error::{CommandError, CommitError};
 use crate::run::{stderr_string, stdout_string};
 use crate::types::{Author, CommitResult};
 
@@ -71,10 +71,7 @@ impl<'a> CommitBuilder<'a> {
     }
 
     pub(crate) fn build_commit_command(&self) -> ShellCommand {
-        let mut cmd = ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("commit");
+        let mut cmd = ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("commit");
 
         if let Some(ref msg) = self.message {
             cmd = cmd.arg("-m").arg(msg.as_str());
@@ -110,7 +107,6 @@ impl<'a> CommitBuilder<'a> {
             .arg("--format=%H%n%h%n%s%n%D%n%an%n%ae%n")
             .arg("--shortstat")
     }
-
 }
 
 /// Check if the commit command succeeded; classify errors if it didn't.
@@ -140,18 +136,11 @@ pub(crate) fn parse_commit_output(output: &Output) -> Result<(), CommitError> {
     }
 
     if lower.contains("gpg") && lower.contains("failed") {
-        return Err(CommitError::SigningFailed {
-            reason: stderr.clone(),
-        });
+        return Err(CommitError::SigningFailed { reason: stderr.clone() });
     }
 
     let code = output.status.code().unwrap_or(-1);
-    Err(CommitError::Command(CommandError::Failed {
-        args: "commit".to_string(),
-        code,
-        stdout,
-        stderr,
-    }))
+    Err(CommitError::Command(CommandError::Failed { args: "commit".to_string(), code, stdout, stderr }))
 }
 
 /// Parse the output of `git log -1 --format=... --shortstat` to extract commit details.
@@ -192,10 +181,7 @@ pub(crate) fn parse_commit_details(output: &Output) -> Result<CommitResult, Comm
         short_sha,
         message,
         branch,
-        author: Author {
-            name: author_name,
-            email: author_email,
-        },
+        author: Author { name: author_name, email: author_email },
         files_changed,
         insertions,
         deletions,
@@ -207,12 +193,7 @@ fn extract_branch_from_refs(refs_line: &str) -> String {
     if let Some(arrow_pos) = refs_line.find("-> ") {
         let after_arrow = &refs_line[arrow_pos + 3..];
         // Take until comma or end
-        after_arrow
-            .split(',')
-            .next()
-            .unwrap_or("HEAD")
-            .trim()
-            .to_string()
+        after_arrow.split(',').next().unwrap_or("HEAD").trim().to_string()
     } else {
         "HEAD".to_string()
     }
@@ -226,15 +207,15 @@ fn parse_shortstat(line: &str) -> (usize, usize, usize) {
     // Parse: " 1 file changed, 2 insertions(+), 1 deletion(-)"
     for part in line.split(',') {
         let part = part.trim();
-        if let Some(num_str) = part.split_whitespace().next() {
-            if let Ok(num) = num_str.parse::<usize>() {
-                if part.contains("file") {
-                    files_changed = num;
-                } else if part.contains("insertion") {
-                    insertions = num;
-                } else if part.contains("deletion") {
-                    deletions = num;
-                }
+        if let Some(num_str) = part.split_whitespace().next()
+            && let Ok(num) = num_str.parse::<usize>()
+        {
+            if part.contains("file") {
+                files_changed = num;
+            } else if part.contains("insertion") {
+                insertions = num;
+            } else if part.contains("deletion") {
+                deletions = num;
             }
         }
     }

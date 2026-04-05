@@ -19,9 +19,7 @@ pub fn parse_open(output: &Output, path: &Path) -> Result<String, OpenError> {
     let code = output.status.code().unwrap_or(-1);
 
     if stderr.contains("not a git repository") {
-        return Err(OpenError::NotARepo {
-            path: path.to_path_buf(),
-        });
+        return Err(OpenError::NotARepo { path: path.to_path_buf() });
     }
 
     if stderr.contains("Permission denied")
@@ -29,17 +27,11 @@ pub fn parse_open(output: &Output, path: &Path) -> Result<String, OpenError> {
         || stderr.contains("not accessible")
         || stderr.contains("No such file or directory")
     {
-        return Err(OpenError::NotAccessible {
-            path: path.to_path_buf(),
-            reason: stderr.clone(),
-        });
+        return Err(OpenError::NotAccessible { path: path.to_path_buf(), reason: stderr.clone() });
     }
 
     if stderr.contains("corrupt") || stderr.contains("broken") {
-        return Err(OpenError::CorruptRepo {
-            path: path.to_path_buf(),
-            reason: stderr.clone(),
-        });
+        return Err(OpenError::CorruptRepo { path: path.to_path_buf(), reason: stderr.clone() });
     }
 
     // Fallback: unrecognised non-zero exit

@@ -1,5 +1,5 @@
-use crate::error::SetupError;
 use crate::builder::version;
+use crate::error::SetupError;
 use std::path::PathBuf;
 use which::which;
 
@@ -22,8 +22,5 @@ pub struct GitInfo {
 pub fn get() -> Result<GitInfo, SetupError> {
     let path = path()?;
     let ver = version::version()?;
-    Ok(GitInfo {
-        path,
-        version: ver.number,
-    })
+    Ok(GitInfo { path, version: ver.number })
 }

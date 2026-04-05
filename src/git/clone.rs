@@ -106,12 +106,7 @@ impl AsyncCloneWithDest {
             parse_branch_detect(&detect_output)
         };
 
-        Ok(CloneResult {
-            path: self.dest,
-            remote,
-            branch,
-            shallow,
-        })
+        Ok(CloneResult { path: self.dest, remote, branch, shallow })
     }
 
     fn build_command(&self) -> ShellCommand {

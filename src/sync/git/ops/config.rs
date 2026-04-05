@@ -1,6 +1,6 @@
 use crate::error::ConfigError;
 use crate::ops::config::{parse_config_get_output, parse_config_set_output, parse_config_unset_output};
-use crate::ops::{ConfigSetBuilder, ConfigGetBuilder, ConfigUnsetBuilder};
+use crate::ops::{ConfigGetBuilder, ConfigSetBuilder, ConfigUnsetBuilder};
 
 #[cfg(not(feature = "tokio"))]
 impl<'a> ConfigSetBuilder<'a> {

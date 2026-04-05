@@ -1,6 +1,6 @@
 use crate::error::CommitError;
-use crate::ops::commit::{parse_commit_details, parse_commit_output};
 use crate::ops::CommitBuilder;
+use crate::ops::commit::{parse_commit_details, parse_commit_output};
 use crate::types::CommitResult;
 
 #[cfg(not(feature = "tokio"))]

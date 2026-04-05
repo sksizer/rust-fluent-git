@@ -1,16 +1,16 @@
 use crate::error::WorktreeError;
 use crate::ops::worktree::{
-    build_list_command, find_branch_for_path, parse_add_output, parse_branch_check_output,
-    parse_list_output, parse_lock_output, parse_move_output, parse_prune_dry_run_output,
-    parse_prune_output, parse_remove_output, parse_rev_parse_output, parse_unlock_output,
+    build_list_command, find_branch_for_path, parse_add_output, parse_branch_check_output, parse_list_output,
+    parse_lock_output, parse_move_output, parse_prune_dry_run_output, parse_prune_output, parse_remove_output,
+    parse_rev_parse_output, parse_unlock_output,
 };
 use crate::ops::{
-    WorktreeAddBuilder, WorktreeListBuilder, WorktreeLockBuilder, WorktreeMoveBuilder,
-    WorktreePruneBuilder, WorktreeRemoveBuilder, WorktreeUnlockBuilder,
+    WorktreeAddBuilder, WorktreeListBuilder, WorktreeLockBuilder, WorktreeMoveBuilder, WorktreePruneBuilder,
+    WorktreeRemoveBuilder, WorktreeUnlockBuilder,
 };
 use crate::types::{
-    WorktreeAddResult, WorktreeListResult, WorktreeLockResult, WorktreeMoveResult,
-    WorktreePruneResult, WorktreeRemoveResult,
+    WorktreeAddResult, WorktreeListResult, WorktreeLockResult, WorktreeMoveResult, WorktreePruneResult,
+    WorktreeRemoveResult,
 };
 
 #[cfg(not(feature = "blocking"))]
@@ -58,11 +58,7 @@ impl<'a> WorktreeRemoveBuilder<'a> {
         let output = crate::run::run_async(&cmd).await?;
         parse_remove_output(&output, self.path())?;
 
-        Ok(WorktreeRemoveResult {
-            path: self.path().to_path_buf(),
-            branch,
-            pruned: false,
-        })
+        Ok(WorktreeRemoveResult { path: self.path().to_path_buf(), branch, pruned: false })
     }
 }
 

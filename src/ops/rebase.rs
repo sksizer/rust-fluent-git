@@ -16,10 +16,7 @@ pub struct RebaseBuilder<'a> {
 
 impl<'a> RebaseBuilder<'a> {
     pub(crate) fn new(repo_path: &'a Path) -> Self {
-        Self {
-            repo_path,
-            onto: None,
-        }
+        Self { repo_path, onto: None }
     }
 
     /// Set the ref to rebase onto.
@@ -29,10 +26,7 @@ impl<'a> RebaseBuilder<'a> {
     }
 
     pub(crate) fn build_command(&self) -> ShellCommand {
-        let mut cmd = ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("rebase");
+        let mut cmd = ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("rebase");
 
         if let Some(ref onto) = self.onto {
             cmd = cmd.arg(onto.as_str());
@@ -78,29 +72,18 @@ pub(crate) fn parse_rebase_output(output: &Output, onto: &Option<String>) -> Res
         return Err(RebaseError::RefNotFound { reference });
     }
 
-    Err(RebaseError::Command(CommandError::Failed {
-        args: "rebase".to_string(),
-        code,
-        stdout,
-        stderr,
-    }))
+    Err(RebaseError::Command(CommandError::Failed { args: "rebase".to_string(), code, stdout, stderr }))
 }
 
 fn parse_conflict_files(output: &str) -> Vec<String> {
     output
         .lines()
         .filter(|l| l.contains("CONFLICT"))
-        .filter_map(|l| {
-            l.rsplit("Merge conflict in ").next().map(|s| s.trim().to_string())
-        })
+        .filter_map(|l| l.rsplit("Merge conflict in ").next().map(|s| s.trim().to_string()))
         .filter(|s| !s.is_empty() && !s.contains("CONFLICT"))
         .collect()
 }
 
 fn parse_dirty_files(output: &str) -> Vec<String> {
-    output
-        .lines()
-        .filter(|l| l.starts_with('\t'))
-        .map(|l| l.trim().to_string())
-        .collect()
+    output.lines().filter(|l| l.starts_with('\t')).map(|l| l.trim().to_string()).collect()
 }

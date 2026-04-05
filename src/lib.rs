@@ -1,8 +1,8 @@
 pub mod error;
-pub mod types;
-pub mod run;
-pub mod parse;
 pub mod ops;
+pub mod parse;
+pub mod run;
+pub mod types;
 
 #[cfg(feature = "blocking")]
 pub mod sync;

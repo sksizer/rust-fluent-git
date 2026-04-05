@@ -2,6 +2,10 @@
 name = "fluent_git"
 version = "0.1.0"
 edition = "2024"
+authors = ["sksizer"]
+description = "A fluent builder-pattern API for git operations"
+homepage = "https://github.com/sksizer/rust-fluent-git"
+license = "MIT"
 
 [features]
 default = ["blocking"]

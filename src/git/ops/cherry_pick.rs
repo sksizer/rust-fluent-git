@@ -1,6 +1,6 @@
 use crate::error::CherryPickError;
-use crate::ops::cherry_pick::parse_cherry_pick_output;
 use crate::ops::CherryPickBuilder;
+use crate::ops::cherry_pick::parse_cherry_pick_output;
 
 #[cfg(not(feature = "blocking"))]
 impl<'a> CherryPickBuilder<'a> {

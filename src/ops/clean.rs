@@ -18,11 +18,7 @@ pub struct CleanBuilder<'a> {
 
 impl<'a> CleanBuilder<'a> {
     pub(crate) fn new(repo_path: &'a Path) -> Self {
-        Self {
-            repo_path,
-            force: false,
-            directories: false,
-        }
+        Self { repo_path, force: false, directories: false }
     }
 
     /// Enable force mode (required by git clean).
@@ -43,10 +39,7 @@ impl<'a> CleanBuilder<'a> {
     }
 
     pub(crate) fn build_command(&self) -> ShellCommand {
-        let mut cmd = ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("clean");
+        let mut cmd = ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("clean");
 
         if self.force {
             cmd = cmd.arg("-f");
@@ -99,8 +92,5 @@ fn parse_clean_lines(stdout: &str) -> CleanResult {
         }
     }
 
-    CleanResult {
-        removed_files,
-        removed_dirs,
-    }
+    CleanResult { removed_files, removed_dirs }
 }
