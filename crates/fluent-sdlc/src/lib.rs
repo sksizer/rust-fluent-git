@@ -8,3 +8,6 @@ pub use fluent_gh as gh;
 
 #[cfg(feature = "git")]
 pub use fluent_git as git;
+
+#[cfg(feature = "lima")]
+pub use fluent_lima as lima;
