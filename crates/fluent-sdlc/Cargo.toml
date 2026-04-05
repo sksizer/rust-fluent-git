@@ -7,13 +7,15 @@ authors.workspace = true
 description = "Fluent builder-pattern wrappers for SDLC command-line tools"
 
 [features]
-default = ["git", "gh", "claude", "lima"]
+default = ["git", "gh", "claude", "lima", "brew"]
 git = ["dep:fluent-git"]
 gh = ["dep:fluent-gh"]
 claude = ["dep:fluent-claude"]
 lima = ["dep:fluent-lima"]
+brew = ["dep:fluent-brew"]
 
 [dependencies]
+fluent-brew = { workspace = true, optional = true }
 fluent-claude = { workspace = true, optional = true }
 fluent-core = { workspace = true }
 fluent-gh = { workspace = true, optional = true }

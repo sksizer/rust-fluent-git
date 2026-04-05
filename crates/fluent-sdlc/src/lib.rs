@@ -1,5 +1,8 @@
 pub use fluent_core as core;
 
+#[cfg(feature = "brew")]
+pub use fluent_brew as brew;
+
 #[cfg(feature = "claude")]
 pub use fluent_claude as claude;
 
