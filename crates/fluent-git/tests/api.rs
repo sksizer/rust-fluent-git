@@ -31,6 +31,20 @@ mod tests {
         dir
     }
 
+    /// Configure git identity in a repo so commits work on CI (no global config).
+    #[cfg(feature = "blocking")]
+    fn configure_test_identity(repo: &Repo) {
+        repo.config().set("user.name", "Test").run().unwrap();
+        repo.config().set("user.email", "test@test.com").run().unwrap();
+    }
+
+    /// Async version of configure_test_identity.
+    #[cfg(feature = "tokio")]
+    async fn configure_test_identity_async(repo: &Repo) {
+        repo.config().set("user.name", "Test").run().await.unwrap();
+        repo.config().set("user.email", "test@test.com").run().await.unwrap();
+    }
+
     // ══════════════════════════════════════════════════════════════════════
     // Setup: System info
     // ══════════════════════════════════════════════════════════════════════
@@ -246,6 +260,7 @@ mod tests {
     fn sync_clone_specific_branch() {
         let origin = get_temp_dir("sync_clone_branch_origin");
         let origin_repo = fluent_git::sync::git::init(&origin).initial_branch("main").run().unwrap().into_repo();
+        configure_test_identity(&origin_repo);
         fs::write(origin.join("dummy.txt"), "x").unwrap();
         origin_repo.add().all().run().unwrap();
         origin_repo.commit().message("init").run().unwrap();
@@ -259,6 +274,7 @@ mod tests {
     async fn async_clone_specific_branch() {
         let origin = get_temp_dir("async_clone_branch_origin");
         let origin_repo = fluent_git::git::init(&origin).initial_branch("main").run().await.unwrap().into_repo();
+        configure_test_identity_async(&origin_repo).await;
         fs::write(origin.join("dummy.txt"), "x").unwrap();
         origin_repo.add().all().run().await.unwrap();
         origin_repo.commit().message("init").run().await.unwrap();
@@ -408,6 +424,7 @@ mod tests {
     fn sync_commit_with_message() {
         let dir = get_temp_dir("sync_commit_msg");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         let result: Result<CommitResult, CommitError> = repo.commit().message("initial").run();
@@ -422,6 +439,7 @@ mod tests {
     async fn async_commit_with_message() {
         let dir = get_temp_dir("async_commit_msg");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         let result: Result<CommitResult, CommitError> = repo.commit().message("initial").run().await;
@@ -436,6 +454,7 @@ mod tests {
     fn sync_commit_with_author() {
         let dir = get_temp_dir("sync_commit_author");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         let result = repo.commit().message("init").author("Test", "t@t.com").run().unwrap();
@@ -447,6 +466,7 @@ mod tests {
     async fn async_commit_with_author() {
         let dir = get_temp_dir("async_commit_author");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         let result = repo.commit().message("init").author("Test", "t@t.com").run().await.unwrap();
@@ -458,6 +478,7 @@ mod tests {
     fn sync_commit_allow_empty() {
         let dir = get_temp_dir("sync_commit_empty");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         let result = repo.commit().message("empty").allow_empty().run().unwrap();
         assert_eq!(result.files_changed, 0);
     }
@@ -467,6 +488,7 @@ mod tests {
     async fn async_commit_allow_empty() {
         let dir = get_temp_dir("async_commit_empty");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         let result = repo.commit().message("empty").allow_empty().run().await.unwrap();
         assert_eq!(result.files_changed, 0);
     }
@@ -476,6 +498,7 @@ mod tests {
     fn sync_commit_amend() {
         let dir = get_temp_dir("sync_commit_amend");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("initial").run().unwrap();
@@ -488,6 +511,7 @@ mod tests {
     async fn async_commit_amend() {
         let dir = get_temp_dir("async_commit_amend");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("initial").run().await.unwrap();
@@ -500,6 +524,7 @@ mod tests {
     fn sync_commit_nothing_staged_fails() {
         let dir = get_temp_dir("sync_commit_no_staged");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         let err: CommitError = repo.commit().message("nothing").run().unwrap_err();
         assert!(matches!(err, CommitError::NothingToCommit));
     }
@@ -509,6 +534,7 @@ mod tests {
     async fn async_commit_nothing_staged_fails() {
         let dir = get_temp_dir("async_commit_no_staged");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         let err: CommitError = repo.commit().message("nothing").run().await.unwrap_err();
         assert!(matches!(err, CommitError::NothingToCommit));
     }
@@ -518,6 +544,7 @@ mod tests {
     fn sync_commit_with_closure() {
         let dir = get_temp_dir("sync_commit_with");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         let no_verify = true;
@@ -537,6 +564,7 @@ mod tests {
     async fn async_commit_with_closure() {
         let dir = get_temp_dir("async_commit_with");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         let no_verify = true;
@@ -561,6 +589,7 @@ mod tests {
     fn sync_branch_create_list_delete_rename() {
         let dir = get_temp_dir("sync_branch_lifecycle");
         let repo = fluent_git::sync::git::init(&dir).initial_branch("main").run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -585,6 +614,7 @@ mod tests {
     async fn async_branch_create_list_delete_rename() {
         let dir = get_temp_dir("async_branch_lifecycle");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -609,6 +639,7 @@ mod tests {
     fn sync_branch_duplicate_fails() {
         let dir = get_temp_dir("sync_dup_branch");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -621,6 +652,7 @@ mod tests {
     async fn async_branch_duplicate_fails() {
         let dir = get_temp_dir("async_dup_branch");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -633,6 +665,7 @@ mod tests {
     fn sync_delete_current_branch_fails() {
         let dir = get_temp_dir("sync_del_current");
         let repo = fluent_git::sync::git::init(&dir).initial_branch("main").run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -644,6 +677,7 @@ mod tests {
     async fn async_delete_current_branch_fails() {
         let dir = get_temp_dir("async_del_current");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -659,6 +693,7 @@ mod tests {
     fn sync_checkout_branch_and_new_branch() {
         let dir = get_temp_dir("sync_checkout");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -675,6 +710,7 @@ mod tests {
     async fn async_checkout_branch_and_new_branch() {
         let dir = get_temp_dir("async_checkout");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -691,6 +727,7 @@ mod tests {
     fn sync_checkout_nonexistent_fails() {
         let dir = get_temp_dir("sync_checkout_noexist");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -702,6 +739,7 @@ mod tests {
     async fn async_checkout_nonexistent_fails() {
         let dir = get_temp_dir("async_checkout_noexist");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -717,6 +755,7 @@ mod tests {
     fn sync_status() {
         let dir = get_temp_dir("sync_status");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -736,6 +775,7 @@ mod tests {
     async fn async_status() {
         let dir = get_temp_dir("async_status");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -776,6 +816,7 @@ mod tests {
     fn sync_log() {
         let dir = get_temp_dir("sync_log");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("a.txt"), "a").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("first").run().unwrap();
@@ -793,6 +834,7 @@ mod tests {
     async fn async_log() {
         let dir = get_temp_dir("async_log");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("a.txt"), "a").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("first").run().await.unwrap();
@@ -810,6 +852,7 @@ mod tests {
     fn sync_log_with_limit() {
         let dir = get_temp_dir("sync_log_limit");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         for i in 0..5 {
             fs::write(dir.join(format!("{i}.txt")), format!("{i}")).unwrap();
             repo.add().all().run().unwrap();
@@ -823,6 +866,7 @@ mod tests {
     async fn async_log_with_limit() {
         let dir = get_temp_dir("async_log_limit");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         for i in 0..5 {
             fs::write(dir.join(format!("{i}.txt")), format!("{i}")).unwrap();
             repo.add().all().run().await.unwrap();
@@ -856,6 +900,7 @@ mod tests {
     fn sync_diff() {
         let dir = get_temp_dir("sync_diff");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -869,6 +914,7 @@ mod tests {
     async fn async_diff() {
         let dir = get_temp_dir("async_diff");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -882,6 +928,7 @@ mod tests {
     fn sync_diff_cached() {
         let dir = get_temp_dir("sync_diff_cached");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -895,6 +942,7 @@ mod tests {
     async fn async_diff_cached() {
         let dir = get_temp_dir("async_diff_cached");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -908,6 +956,7 @@ mod tests {
     fn sync_diff_between_refs() {
         let dir = get_temp_dir("sync_diff_refs");
         let repo = fluent_git::sync::git::init(&dir).initial_branch("main").run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("first").run().unwrap();
@@ -923,6 +972,7 @@ mod tests {
     async fn async_diff_between_refs() {
         let dir = get_temp_dir("async_diff_refs");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("first").run().await.unwrap();
@@ -938,6 +988,7 @@ mod tests {
     fn sync_diff_bad_ref_fails() {
         let dir = get_temp_dir("sync_diff_bad_ref");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("a.txt"), "a").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -949,6 +1000,7 @@ mod tests {
     async fn async_diff_bad_ref_fails() {
         let dir = get_temp_dir("async_diff_bad_ref");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("a.txt"), "a").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -964,6 +1016,7 @@ mod tests {
     fn sync_stash_push_and_pop() {
         let dir = get_temp_dir("sync_stash");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -979,6 +1032,7 @@ mod tests {
     async fn async_stash_push_and_pop() {
         let dir = get_temp_dir("async_stash");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -994,6 +1048,7 @@ mod tests {
     fn sync_stash_list() {
         let dir = get_temp_dir("sync_stash_list");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -1010,6 +1065,7 @@ mod tests {
     async fn async_stash_list() {
         let dir = get_temp_dir("async_stash_list");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -1026,6 +1082,7 @@ mod tests {
     fn sync_stash_on_clean_fails() {
         let dir = get_temp_dir("sync_stash_clean");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -1037,6 +1094,7 @@ mod tests {
     async fn async_stash_on_clean_fails() {
         let dir = get_temp_dir("async_stash_clean");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -1082,6 +1140,7 @@ mod tests {
     fn sync_tag_lifecycle() {
         let dir = get_temp_dir("sync_tag");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -1100,6 +1159,7 @@ mod tests {
     async fn async_tag_lifecycle() {
         let dir = get_temp_dir("async_tag");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -1118,6 +1178,7 @@ mod tests {
     fn sync_reset() {
         let dir = get_temp_dir("sync_reset");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("a.txt"), "a").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("first").run().unwrap();
@@ -1133,6 +1194,7 @@ mod tests {
     async fn async_reset() {
         let dir = get_temp_dir("async_reset");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("a.txt"), "a").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("first").run().await.unwrap();
@@ -1148,6 +1210,7 @@ mod tests {
     fn sync_merge_no_ff() {
         let dir = get_temp_dir("sync_merge");
         let repo = fluent_git::sync::git::init(&dir).initial_branch("main").run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -1165,6 +1228,7 @@ mod tests {
     async fn async_merge_no_ff() {
         let dir = get_temp_dir("async_merge");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -1226,6 +1290,7 @@ mod tests {
     fn sync_cherry_pick() {
         let dir = get_temp_dir("sync_cherry_pick");
         let repo = fluent_git::sync::git::init(&dir).initial_branch("main").run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -1244,6 +1309,7 @@ mod tests {
     async fn async_cherry_pick() {
         let dir = get_temp_dir("async_cherry_pick");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -1284,6 +1350,7 @@ mod tests {
     fn sync_clean() {
         let dir = get_temp_dir("sync_clean");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("junk.txt"), "j").unwrap();
         assert!(matches!(repo.clean().run().unwrap_err(), CleanError::ForceRequired));
         fs::write(dir.join("h.txt"), "h").unwrap();
@@ -1298,6 +1365,7 @@ mod tests {
     async fn async_clean() {
         let dir = get_temp_dir("async_clean");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("junk.txt"), "j").unwrap();
         assert!(matches!(repo.clean().run().await.unwrap_err(), CleanError::ForceRequired));
         fs::write(dir.join("h.txt"), "h").unwrap();
@@ -1312,6 +1380,7 @@ mod tests {
     fn sync_rev_parse() {
         let dir = get_temp_dir("sync_rev_parse");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -1325,6 +1394,7 @@ mod tests {
     async fn async_rev_parse() {
         let dir = get_temp_dir("async_rev_parse");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -1342,6 +1412,7 @@ mod tests {
     fn sync_worktree_lifecycle() {
         let dir = get_temp_dir("sync_wt");
         let repo = fluent_git::sync::git::init(&dir).initial_branch("main").run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
@@ -1395,6 +1466,7 @@ mod tests {
     async fn async_worktree_lifecycle() {
         let dir = get_temp_dir("async_wt");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().await.unwrap();
         repo.commit().message("init").run().await.unwrap();
@@ -1467,6 +1539,7 @@ mod tests {
 
         let dir = get_temp_dir("sync_workflow");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         assert_eq!(workflow(&repo).unwrap().message, "feature work");
     }
 
@@ -1487,6 +1560,7 @@ mod tests {
 
         let dir = get_temp_dir("async_workflow");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
+        configure_test_identity_async(&repo).await;
         assert_eq!(workflow(&repo).await.unwrap().message, "feature work");
     }
 
@@ -1500,6 +1574,7 @@ mod tests {
 
         let dir = get_temp_dir("sync_git_error_domain");
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
+        configure_test_identity(&repo);
         fs::write(dir.join("h.txt"), "h").unwrap();
         repo.add().all().run().unwrap();
         repo.commit().message("init").run().unwrap();
