@@ -3,7 +3,16 @@ name = "fluent_git"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+default = ["blocking"]
+blocking = []
+tokio = ["dep:tokio", "cmd-spec/tokio"]
+
 [dependencies]
 cmd-spec = "0.1.0"
 thiserror = "2.0.18"
+tokio = { version = "1", features = ["process"], optional = true }
 which = "8.0.2"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "process"] }

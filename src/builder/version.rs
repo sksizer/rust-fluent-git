@@ -1,7 +1,7 @@
 use crate::error::SetupError;
 
 pub fn version() -> Result<Version, SetupError> {
-    let cmd = crate::git().arg("--version").run();
+    let cmd = crate::git_cmd().arg("--version").run();
 
     match cmd {
         Ok(output) => Ok(parse_git_version(output)),

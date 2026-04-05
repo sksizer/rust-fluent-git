@@ -1,0 +1,13 @@
+use crate::error::LogError;
+use crate::ops::log::parse_log_output;
+use crate::ops::LogBuilder;
+use crate::types::LogEntry;
+
+#[cfg(not(feature = "tokio"))]
+impl<'a> LogBuilder<'a> {
+    pub fn run(self) -> Result<Vec<LogEntry>, LogError> {
+        let cmd = self.build_command();
+        let output = crate::run::run_sync(&cmd)?;
+        parse_log_output(&output)
+    }
+}

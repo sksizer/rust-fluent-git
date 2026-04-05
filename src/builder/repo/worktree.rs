@@ -91,7 +91,7 @@ impl Add {
     }
 
     pub fn run(&self) -> Result<(), CommandError> {
-        let mut cmd = crate::git();
+        let mut cmd = crate::git_cmd();
         cmd.dir(&self.cwd);
         cmd.args(&["worktree", "add"]);
 
