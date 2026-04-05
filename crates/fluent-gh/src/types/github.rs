@@ -1,4 +1,4 @@
-use crate::ops::{IssueBuilder, PrBuilder, RepoBuilder};
+use crate::ops::{IssueBuilder, PrBuilder, ReleaseBuilder, RepoBuilder, RunBuilder, WorkflowBuilder};
 
 /// Entry point for GitHub CLI operations.
 ///
@@ -39,8 +39,23 @@ impl GitHub {
         IssueBuilder::new(self)
     }
 
+    /// Start building a `gh release` command.
+    pub fn release(&self) -> ReleaseBuilder<'_> {
+        ReleaseBuilder::new(self)
+    }
+
     /// Start building a `gh repo` command.
     pub fn repo_ops(&self) -> RepoBuilder<'_> {
         RepoBuilder::new(self)
+    }
+
+    /// Start building a `gh run` command.
+    pub fn run(&self) -> RunBuilder<'_> {
+        RunBuilder::new(self)
+    }
+
+    /// Start building a `gh workflow` command.
+    pub fn workflow(&self) -> WorkflowBuilder<'_> {
+        WorkflowBuilder::new(self)
     }
 }
