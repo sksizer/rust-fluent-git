@@ -17,7 +17,7 @@
 use std::path::PathBuf;
 use std::process::{Command, Output};
 
-use crate::GitError;
+use crate::error::CommandError;
 
 /// Entry point. `git(path).args(&["status"]).run()`
 pub fn git() -> GitCommand {
@@ -28,6 +28,7 @@ pub fn git() -> GitCommand {
 pub struct GitCommand {
     args: Vec<String>,
     cwd: Option<PathBuf>,
+    envs: Vec<(String, String)>,
 }
 
 impl Default for GitCommand {
@@ -40,11 +41,31 @@ impl GitCommand {
         Self {
             args: Vec::new(),
             cwd: None,
+            envs: Vec::new(),
         }
     }
 
     pub fn dir(&mut self, cwd: impl Into<PathBuf>) -> &mut Self {
         self.cwd = Some(cwd.into());
+        self
+    }
+
+    /// Set an environment variable for the git subprocess.
+    pub fn env(&mut self, key: impl Into<String>, val: impl Into<String>) -> &mut Self {
+        self.envs.push((key.into(), val.into()));
+        self
+    }
+
+    /// Set multiple environment variables for the git subprocess.
+    pub fn envs<I, K, V>(&mut self, vars: I) -> &mut Self
+    where
+        I: IntoIterator<Item = (K, V)>,
+        K: Into<String>,
+        V: Into<String>,
+    {
+        for (k, v) in vars {
+            self.envs.push((k.into(), v.into()));
+        }
         self
     }
 
@@ -60,14 +81,17 @@ impl GitCommand {
         self
     }
 
-    /// Run the command. Returns trimmed stdout on success, GitError on failure.
-    pub fn run(&self) -> Result<String, GitError> {
+    /// Run the command. Returns trimmed stdout on success, error on failure.
+    pub fn run(&self) -> Result<String, CommandError> {
         let output = self.run_raw()?;
 
         if !output.status.success() {
             let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
-            return Err(GitError::Command {
-                command: self.label(),
+            let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
+            return Err(CommandError::Failed {
+                args: self.label(),
+                code: output.status.code().unwrap_or(-1),
+                stdout,
                 stderr,
             });
         }
@@ -78,7 +102,7 @@ impl GitCommand {
     /// Run the command and return the raw `Output`.
     ///
     /// Use this when you need to inspect stderr or handle non-zero exits yourself.
-    pub fn run_raw(&self) -> Result<Output, GitError> {
+    pub fn run_raw(&self) -> Result<Output, CommandError> {
         let mut cmd = Command::new("git");
         cmd.args(&self.args);
 
@@ -86,14 +110,23 @@ impl GitCommand {
             cmd.current_dir(cwd);
         }
 
-        cmd.output().map_err(GitError::Exec)
+        for (k, v) in &self.envs {
+            cmd.env(k, v);
+        }
+
+        cmd.output().map_err(|e| CommandError::Failed {
+            args: self.label(),
+            code: -1,
+            stdout: String::new(),
+            stderr: e.to_string(),
+        })
     }
 
     /// Run the command as a boolean probe.
     ///
     /// Returns `Ok(true)` on exit 0, `Ok(false)` on non-zero.
     /// Only returns `Err` if the process failed to spawn.
-    pub fn check(&self) -> Result<bool, GitError> {
+    pub fn check(&self) -> Result<bool, CommandError> {
         let output = self.run_raw()?;
         Ok(output.status.success())
     }

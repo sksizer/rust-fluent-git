@@ -1,14 +1,11 @@
-use crate::GitError;
+use crate::error::SetupError;
 
-pub fn version() -> Result<Version, GitError> {
-    let cmd = crate::git().arg("--version").run();
+pub fn version() -> Result<Version, SetupError> {
+    let cmd = crate::git_cmd().arg("--version").run();
 
     match cmd {
         Ok(output) => Ok(parse_git_version(output)),
-        Err(e) => match e {
-            GitError::Exec(_) => Err(GitError::NotAvailable),
-            other => Err(other),
-        },
+        Err(_) => Err(SetupError::NotInstalled),
     }
 }
 
@@ -37,6 +34,6 @@ pub fn parse_git_version(version_str: String) -> Version {
 mod tests {
     #[test]
     fn test_api() {
-        let v = crate::builder::version::version();
+        let _v = crate::builder::version::version();
     }
 }
