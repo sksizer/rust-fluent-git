@@ -203,8 +203,7 @@ mod tests {
         let origin = get_temp_dir("sync_clone_origin");
         fluent_git::sync::git::init(&origin).run().unwrap();
         let dest = get_temp_dir("sync_clone_dest");
-        let result: Result<CloneResult, CloneError> =
-            fluent_git::sync::git::clone(&origin).into(&dest).run();
+        let result: Result<CloneResult, CloneError> = fluent_git::sync::git::clone(&origin).into(&dest).run();
         let result = result.unwrap();
         assert!(dest.join(".git").exists());
         assert!(!result.shallow);
@@ -216,8 +215,7 @@ mod tests {
         let origin = get_temp_dir("async_clone_origin");
         fluent_git::git::init(&origin).run().await.unwrap();
         let dest = get_temp_dir("async_clone_dest");
-        let result: Result<CloneResult, CloneError> =
-            fluent_git::git::clone(&origin).into(&dest).run().await;
+        let result: Result<CloneResult, CloneError> = fluent_git::git::clone(&origin).into(&dest).run().await;
         let result = result.unwrap();
         assert!(dest.join(".git").exists());
         assert!(!result.shallow);
@@ -317,7 +315,9 @@ mod tests {
         let dest = get_temp_dir("sync_clone_mutate_dest");
         let shallow = true;
         let mut clone = fluent_git::sync::git::clone(&origin).into(&dest).mutate();
-        if shallow { clone.depth(1); }
+        if shallow {
+            clone.depth(1);
+        }
         clone.finish().run().unwrap();
     }
 
@@ -329,7 +329,9 @@ mod tests {
         let dest = get_temp_dir("async_clone_mutate_dest");
         let shallow = true;
         let mut clone = fluent_git::git::clone(&origin).into(&dest).mutate();
-        if shallow { clone.depth(1); }
+        if shallow {
+            clone.depth(1);
+        }
         clone.finish().run().await.unwrap();
     }
 
@@ -521,7 +523,11 @@ mod tests {
         let no_verify = true;
         repo.commit()
             .message("fast")
-            .with(|c| { if no_verify { c.no_verify(); } })
+            .with(|c| {
+                if no_verify {
+                    c.no_verify();
+                }
+            })
             .run()
             .unwrap();
     }
@@ -536,7 +542,11 @@ mod tests {
         let no_verify = true;
         repo.commit()
             .message("fast")
-            .with(|c| { if no_verify { c.no_verify(); } })
+            .with(|c| {
+                if no_verify {
+                    c.no_verify();
+                }
+            })
             .run()
             .await
             .unwrap();
@@ -1044,7 +1054,10 @@ mod tests {
         let repo = fluent_git::sync::git::init(&dir).run().unwrap().into_repo();
         repo.remote().add("origin", "https://github.com/u/r.git").run().unwrap();
         assert!(repo.remote().list().run().unwrap().iter().any(|r| r.name == "origin"));
-        assert!(matches!(repo.remote().add("origin", "https://b.com").run().unwrap_err(), RemoteError::AlreadyExists { .. }));
+        assert!(matches!(
+            repo.remote().add("origin", "https://b.com").run().unwrap_err(),
+            RemoteError::AlreadyExists { .. }
+        ));
         repo.remote().remove("origin").run().unwrap();
         assert!(matches!(repo.remote().remove("ghost").run().unwrap_err(), RemoteError::NotFound { .. }));
     }
@@ -1056,7 +1069,10 @@ mod tests {
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         repo.remote().add("origin", "https://github.com/u/r.git").run().await.unwrap();
         assert!(repo.remote().list().run().await.unwrap().iter().any(|r| r.name == "origin"));
-        assert!(matches!(repo.remote().add("origin", "https://b.com").run().await.unwrap_err(), RemoteError::AlreadyExists { .. }));
+        assert!(matches!(
+            repo.remote().add("origin", "https://b.com").run().await.unwrap_err(),
+            RemoteError::AlreadyExists { .. }
+        ));
         repo.remote().remove("origin").run().await.unwrap();
         assert!(matches!(repo.remote().remove("ghost").run().await.unwrap_err(), RemoteError::NotFound { .. }));
     }
@@ -1365,7 +1381,10 @@ mod tests {
         repo.worktree().remove(&wt_moved).run().unwrap();
         repo.worktree().remove(&wt_b).run().unwrap();
         assert_eq!(repo.worktree().list().run().unwrap().linked().len(), 0);
-        assert!(matches!(repo.worktree().remove(&PathBuf::from("/tmp/ghost")).run().unwrap_err(), WorktreeError::NotFound { .. }));
+        assert!(matches!(
+            repo.worktree().remove(&PathBuf::from("/tmp/ghost")).run().unwrap_err(),
+            WorktreeError::NotFound { .. }
+        ));
 
         // Prune
         assert!(repo.worktree().prune().run().unwrap().pruned.is_empty());
@@ -1389,7 +1408,10 @@ mod tests {
 
         // Branch in use
         let wt_dup = get_temp_dir("async_wt_dup");
-        assert!(matches!(repo.worktree().add(&wt_dup, "main").run().await.unwrap_err(), WorktreeError::BranchInUse { .. }));
+        assert!(matches!(
+            repo.worktree().add(&wt_dup, "main").run().await.unwrap_err(),
+            WorktreeError::BranchInUse { .. }
+        ));
 
         // List & find
         let list = repo.worktree().list().run().await.unwrap();
@@ -1415,7 +1437,10 @@ mod tests {
         repo.worktree().remove(&wt_moved).run().await.unwrap();
         repo.worktree().remove(&wt_b).run().await.unwrap();
         assert_eq!(repo.worktree().list().run().await.unwrap().linked().len(), 0);
-        assert!(matches!(repo.worktree().remove(&PathBuf::from("/tmp/ghost")).run().await.unwrap_err(), WorktreeError::NotFound { .. }));
+        assert!(matches!(
+            repo.worktree().remove(&PathBuf::from("/tmp/ghost")).run().await.unwrap_err(),
+            WorktreeError::NotFound { .. }
+        ));
 
         // Prune
         assert!(repo.worktree().prune().run().await.unwrap().pruned.is_empty());

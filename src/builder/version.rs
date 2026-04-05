@@ -24,10 +24,7 @@ pub fn parse_git_version(version_str: String) -> Version {
     let version = parts.next().unwrap();
     let platform = parts.next().unwrap_or("unknown");
 
-    Version {
-        number: version.to_string(),
-        platform: platform.to_string(),
-    }
+    Version { number: version.to_string(), platform: platform.to_string() }
 }
 
 #[cfg(test)]

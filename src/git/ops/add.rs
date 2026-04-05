@@ -1,6 +1,6 @@
 use crate::error::AddError;
-use crate::ops::add::{parse_add_output, parse_staged_files};
 use crate::ops::AddBuilder;
+use crate::ops::add::{parse_add_output, parse_staged_files};
 use crate::types::AddResult;
 
 #[cfg(not(feature = "blocking"))]

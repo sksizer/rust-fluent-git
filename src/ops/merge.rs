@@ -19,12 +19,7 @@ pub struct MergeBuilder<'a> {
 
 impl<'a> MergeBuilder<'a> {
     pub(crate) fn new(repo_path: &'a Path) -> Self {
-        Self {
-            repo_path,
-            branch: None,
-            no_ff: false,
-            squash: false,
-        }
+        Self { repo_path, branch: None, no_ff: false, squash: false }
     }
 
     /// Set the branch to merge.
@@ -46,10 +41,7 @@ impl<'a> MergeBuilder<'a> {
     }
 
     pub(crate) fn build_merge_command(&self) -> ShellCommand {
-        let mut cmd = ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("merge");
+        let mut cmd = ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("merge");
 
         if self.no_ff {
             cmd = cmd.arg("--no-ff");
@@ -113,12 +105,7 @@ pub(crate) fn parse_merge_output(output: &Output, branch: &Option<String>) -> Re
         return Err(MergeError::RefNotFound { reference });
     }
 
-    Err(MergeError::Command(CommandError::Failed {
-        args: "merge".to_string(),
-        code,
-        stdout,
-        stderr,
-    }))
+    Err(MergeError::Command(CommandError::Failed { args: "merge".to_string(), code, stdout, stderr }))
 }
 
 /// Parse `git log -1` output after a successful merge.
@@ -127,7 +114,7 @@ pub(crate) fn parse_merge_details(output: &Output, merge_stdout: &str) -> Result
     let lines: Vec<&str> = stdout.lines().collect();
 
     let sha = lines.first().map(|s| s.to_string()).unwrap_or_default();
-    let subject = lines.get(1).map(|s| *s).unwrap_or("");
+    let subject = lines.get(1).copied().unwrap_or("");
 
     // Determine if it was a fast-forward from the merge output
     let fast_forward = merge_stdout.contains("Fast-forward") || merge_stdout.contains("fast-forward");
@@ -153,23 +140,17 @@ pub(crate) fn parse_merge_details(output: &Output, merge_stdout: &str) -> Result
         .map(|l| parse_files_changed(l))
         .unwrap_or(0);
 
-    Ok(MergeResult {
-        sha,
-        strategy,
-        fast_forward,
-        files_changed,
-    })
+    Ok(MergeResult { sha, strategy, fast_forward, files_changed })
 }
 
 fn parse_files_changed(line: &str) -> usize {
     for part in line.split(',') {
         let part = part.trim();
-        if part.contains("file") {
-            if let Some(num_str) = part.split_whitespace().next() {
-                if let Ok(num) = num_str.parse::<usize>() {
-                    return num;
-                }
-            }
+        if part.contains("file")
+            && let Some(num_str) = part.split_whitespace().next()
+            && let Ok(num) = num_str.parse::<usize>()
+        {
+            return num;
         }
     }
     0
@@ -188,9 +169,5 @@ fn parse_conflict_files(output: &str) -> Vec<String> {
 }
 
 fn parse_dirty_files(output: &str) -> Vec<String> {
-    output
-        .lines()
-        .filter(|l| l.starts_with('\t'))
-        .map(|l| l.trim().to_string())
-        .collect()
+    output.lines().filter(|l| l.starts_with('\t')).map(|l| l.trim().to_string()).collect()
 }

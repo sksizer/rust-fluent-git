@@ -23,12 +23,7 @@ use crate::types::CloneResult;
 
 /// Start building a `git clone` command for the given source URL or path.
 pub fn clone(source: impl AsRef<Path>) -> CloneBuilder {
-    CloneBuilder {
-        source: source.as_ref().to_string_lossy().to_string(),
-        depth: None,
-        branch: None,
-        remote_name: None,
-    }
+    CloneBuilder { source: source.as_ref().to_string_lossy().to_string(), depth: None, branch: None, remote_name: None }
 }
 
 /// Builder for `git clone` options (before destination is specified).
@@ -103,12 +98,7 @@ impl CloneWithDest {
             parse_branch_detect(&detect_output)
         };
 
-        Ok(CloneResult {
-            path: self.dest,
-            remote,
-            branch,
-            shallow,
-        })
+        Ok(CloneResult { path: self.dest, remote, branch, shallow })
     }
 
     fn build_command(&self) -> ShellCommand {
@@ -164,50 +154,31 @@ mod tests {
 
     #[test]
     fn build_simple_command() {
-        let builder = clone("https://github.com/user/repo.git")
-            .into(Path::new("/tmp/repo"));
+        let builder = clone("https://github.com/user/repo.git").into(Path::new("/tmp/repo"));
         let cmd = builder.build_command();
         assert_eq!(cmd.program, "git");
-        assert_eq!(
-            cmd.args,
-            vec!["clone", "https://github.com/user/repo.git", "/tmp/repo"]
-        );
+        assert_eq!(cmd.args, vec!["clone", "https://github.com/user/repo.git", "/tmp/repo"]);
     }
 
     #[test]
     fn build_with_depth() {
-        let builder = clone("https://github.com/user/repo.git")
-            .depth(1)
-            .into(Path::new("/tmp/repo"));
+        let builder = clone("https://github.com/user/repo.git").depth(1).into(Path::new("/tmp/repo"));
         let cmd = builder.build_command();
-        assert_eq!(
-            cmd.args,
-            vec!["clone", "--depth", "1", "https://github.com/user/repo.git", "/tmp/repo"]
-        );
+        assert_eq!(cmd.args, vec!["clone", "--depth", "1", "https://github.com/user/repo.git", "/tmp/repo"]);
     }
 
     #[test]
     fn build_with_branch() {
-        let builder = clone("https://github.com/user/repo.git")
-            .branch("develop")
-            .into(Path::new("/tmp/repo"));
+        let builder = clone("https://github.com/user/repo.git").branch("develop").into(Path::new("/tmp/repo"));
         let cmd = builder.build_command();
-        assert_eq!(
-            cmd.args,
-            vec!["clone", "--branch", "develop", "https://github.com/user/repo.git", "/tmp/repo"]
-        );
+        assert_eq!(cmd.args, vec!["clone", "--branch", "develop", "https://github.com/user/repo.git", "/tmp/repo"]);
     }
 
     #[test]
     fn build_with_remote_name() {
-        let builder = clone("https://github.com/user/repo.git")
-            .remote_name("upstream")
-            .into(Path::new("/tmp/repo"));
+        let builder = clone("https://github.com/user/repo.git").remote_name("upstream").into(Path::new("/tmp/repo"));
         let cmd = builder.build_command();
-        assert_eq!(
-            cmd.args,
-            vec!["clone", "--origin", "upstream", "https://github.com/user/repo.git", "/tmp/repo"]
-        );
+        assert_eq!(cmd.args, vec!["clone", "--origin", "upstream", "https://github.com/user/repo.git", "/tmp/repo"]);
     }
 
     #[test]
@@ -221,27 +192,28 @@ mod tests {
         assert_eq!(
             cmd.args,
             vec![
-                "clone", "--depth", "1", "--branch", "main",
-                "--origin", "origin",
-                "https://github.com/user/repo.git", "/tmp/repo"
+                "clone",
+                "--depth",
+                "1",
+                "--branch",
+                "main",
+                "--origin",
+                "origin",
+                "https://github.com/user/repo.git",
+                "/tmp/repo"
             ]
         );
     }
 
     #[test]
     fn mutate_adds_options() {
-        let mut handle = clone("https://github.com/user/repo.git")
-            .into(Path::new("/tmp/repo"))
-            .mutate();
+        let mut handle = clone("https://github.com/user/repo.git").into(Path::new("/tmp/repo")).mutate();
         handle.depth(1).branch("main");
         let builder = handle.finish();
         let cmd = builder.build_command();
         assert_eq!(
             cmd.args,
-            vec![
-                "clone", "--depth", "1", "--branch", "main",
-                "https://github.com/user/repo.git", "/tmp/repo"
-            ]
+            vec!["clone", "--depth", "1", "--branch", "main", "https://github.com/user/repo.git", "/tmp/repo"]
         );
     }
 }

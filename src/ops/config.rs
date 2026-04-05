@@ -5,7 +5,7 @@ use std::process::Output;
 
 use cmd_spec::ShellCommand;
 
-use crate::error::{ConfigError, CommandError};
+use crate::error::{CommandError, ConfigError};
 use crate::run::{stderr_string, stdout_string};
 
 /// Entry point builder for config operations.
@@ -20,27 +20,17 @@ impl<'a> ConfigBuilder<'a> {
 
     /// Set a config key to a value.
     pub fn set(self, key: impl Into<String>, value: impl Into<String>) -> ConfigSetBuilder<'a> {
-        ConfigSetBuilder {
-            repo_path: self.repo_path,
-            key: key.into(),
-            value: value.into(),
-        }
+        ConfigSetBuilder { repo_path: self.repo_path, key: key.into(), value: value.into() }
     }
 
     /// Get a config value by key.
     pub fn get(self, key: impl Into<String>) -> ConfigGetBuilder<'a> {
-        ConfigGetBuilder {
-            repo_path: self.repo_path,
-            key: key.into(),
-        }
+        ConfigGetBuilder { repo_path: self.repo_path, key: key.into() }
     }
 
     /// Unset a config key.
     pub fn unset(self, key: impl Into<String>) -> ConfigUnsetBuilder<'a> {
-        ConfigUnsetBuilder {
-            repo_path: self.repo_path,
-            key: key.into(),
-        }
+        ConfigUnsetBuilder { repo_path: self.repo_path, key: key.into() }
     }
 }
 
@@ -77,10 +67,7 @@ pub(crate) fn parse_config_set_output(output: &Output, key: &str) -> Result<(), 
     let lower = stderr.to_lowercase();
 
     if lower.contains("invalid key") || lower.contains("invalid config key") {
-        return Err(ConfigError::InvalidKey {
-            key: key.to_string(),
-            reason: stderr.clone(),
-        });
+        return Err(ConfigError::InvalidKey { key: key.to_string(), reason: stderr.clone() });
     }
 
     if lower.contains("locked") || lower.contains("lock") && lower.contains("failed") {
@@ -127,9 +114,7 @@ pub(crate) fn parse_config_get_output(output: &Output, key: &str) -> Result<Stri
 
     // git config returns exit code 1 when key is not found
     if code == 1 && stderr.is_empty() {
-        return Err(ConfigError::KeyNotFound {
-            key: key.to_string(),
-        });
+        return Err(ConfigError::KeyNotFound { key: key.to_string() });
     }
 
     Err(ConfigError::Command(CommandError::Failed {
@@ -173,9 +158,7 @@ pub(crate) fn parse_config_unset_output(output: &Output, key: &str) -> Result<()
 
     // git config --unset returns exit code 5 when key is not found
     if code == 5 || (code == 1 && stderr.is_empty()) {
-        return Err(ConfigError::KeyNotFound {
-            key: key.to_string(),
-        });
+        return Err(ConfigError::KeyNotFound { key: key.to_string() });
     }
 
     Err(ConfigError::Command(CommandError::Failed {

@@ -5,7 +5,7 @@ use std::process::Output;
 
 use cmd_spec::ShellCommand;
 
-use crate::error::{TagError, CommandError};
+use crate::error::{CommandError, TagError};
 use crate::run::{stderr_string, stdout_string};
 use crate::types::{Author, TagInfo};
 
@@ -21,26 +21,17 @@ impl<'a> TagBuilder<'a> {
 
     /// Create a new tag.
     pub fn create(self, name: impl Into<String>) -> TagCreateBuilder<'a> {
-        TagCreateBuilder {
-            repo_path: self.repo_path,
-            name: name.into(),
-            message: None,
-        }
+        TagCreateBuilder { repo_path: self.repo_path, name: name.into(), message: None }
     }
 
     /// Delete a tag.
     pub fn delete(self, name: impl Into<String>) -> TagDeleteBuilder<'a> {
-        TagDeleteBuilder {
-            repo_path: self.repo_path,
-            name: name.into(),
-        }
+        TagDeleteBuilder { repo_path: self.repo_path, name: name.into() }
     }
 
     /// List all tags.
     pub fn list(self) -> TagListBuilder<'a> {
-        TagListBuilder {
-            repo_path: self.repo_path,
-        }
+        TagListBuilder { repo_path: self.repo_path }
     }
 }
 
@@ -60,10 +51,7 @@ impl<'a> TagCreateBuilder<'a> {
     }
 
     pub(crate) fn build_command(&self) -> ShellCommand {
-        let mut cmd = ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("tag");
+        let mut cmd = ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("tag");
 
         if let Some(ref msg) = self.message {
             cmd = cmd.arg("-a").arg("-m").arg(msg.as_str());
@@ -88,16 +76,11 @@ pub(crate) fn parse_create_output(output: &Output, name: &str) -> Result<(), Tag
     let lower = stderr.to_lowercase();
 
     if lower.contains("already exists") {
-        return Err(TagError::AlreadyExists {
-            name: name.to_string(),
-        });
+        return Err(TagError::AlreadyExists { name: name.to_string() });
     }
 
     if lower.contains("not a valid tag name") || lower.contains("invalid tag name") {
-        return Err(TagError::InvalidName {
-            name: name.to_string(),
-            reason: stderr.clone(),
-        });
+        return Err(TagError::InvalidName { name: name.to_string(), reason: stderr.clone() });
     }
 
     Err(TagError::Command(CommandError::Failed {
@@ -139,9 +122,7 @@ pub(crate) fn parse_delete_output(output: &Output, name: &str) -> Result<(), Tag
     let lower = stderr.to_lowercase();
 
     if lower.contains("not found") {
-        return Err(TagError::NotFound {
-            name: name.to_string(),
-        });
+        return Err(TagError::NotFound { name: name.to_string() });
     }
 
     Err(TagError::Command(CommandError::Failed {
@@ -203,10 +184,7 @@ pub(crate) fn parse_list_output(output: &Output) -> Result<Vec<TagInfo>, TagErro
             let tagger_name = parts[3].trim();
             let tagger_email = parts[4].trim().trim_start_matches('<').trim_end_matches('>');
             if !tagger_name.is_empty() && !tagger_email.is_empty() {
-                Some(Author {
-                    name: tagger_name.to_string(),
-                    email: tagger_email.to_string(),
-                })
+                Some(Author { name: tagger_name.to_string(), email: tagger_email.to_string() })
             } else {
                 None
             }
@@ -216,22 +194,12 @@ pub(crate) fn parse_list_output(output: &Output) -> Result<Vec<TagInfo>, TagErro
 
         let message = if parts.len() >= 6 {
             let msg = parts[5].trim();
-            if msg.is_empty() {
-                None
-            } else {
-                Some(msg.to_string())
-            }
+            if msg.is_empty() { None } else { Some(msg.to_string()) }
         } else {
             None
         };
 
-        tags.push(TagInfo {
-            name,
-            sha,
-            message,
-            tagger,
-            annotated,
-        });
+        tags.push(TagInfo { name, sha, message, tagger, annotated });
     }
 
     Ok(tags)

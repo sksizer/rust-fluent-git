@@ -1,6 +1,6 @@
 use crate::error::StatusError;
-use crate::ops::status::parse_status_output;
 use crate::ops::StatusBuilder;
+use crate::ops::status::parse_status_output;
 use crate::types::StatusResult;
 
 #[cfg(not(feature = "blocking"))]

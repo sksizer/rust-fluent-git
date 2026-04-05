@@ -20,13 +20,7 @@ pub struct DiffBuilder<'a> {
 
 impl<'a> DiffBuilder<'a> {
     pub(crate) fn new(repo_path: &'a Path) -> Self {
-        Self {
-            repo_path,
-            cached: false,
-            stat: false,
-            ref_a: None,
-            ref_b: None,
-        }
+        Self { repo_path, cached: false, stat: false, ref_a: None, ref_b: None }
     }
 
     /// Show staged (cached) changes.
@@ -75,10 +69,7 @@ impl<'a> DiffBuilder<'a> {
 
     /// Build the raw diff command (with optional --stat).
     pub(crate) fn build_raw_command(&self) -> ShellCommand {
-        let mut cmd = ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("diff");
+        let mut cmd = ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("diff");
 
         if self.cached {
             cmd = cmd.arg("--cached");
@@ -124,15 +115,7 @@ pub(crate) fn parse_numstat_output(output: &Output) -> Result<Vec<DiffFile>, Dif
         let path = parts[2].to_string();
 
         // Determine status based on insertions/deletions
-        let status = if insertions > 0 && deletions == 0 {
-            // Could be new file, but numstat doesn't distinguish;
-            // treat as modified by default
-            FileStatus::Modified
-        } else if insertions == 0 && deletions > 0 {
-            FileStatus::Modified
-        } else {
-            FileStatus::Modified
-        };
+        let status = FileStatus::Modified;
 
         // Handle renames (numstat shows "old => new" in some cases)
         let (file_path, _old_path) = if path.contains(" => ") {
@@ -142,21 +125,13 @@ pub(crate) fn parse_numstat_output(output: &Output) -> Result<Vec<DiffFile>, Dif
             (path, None)
         };
 
-        files.push(DiffFile {
-            path: file_path,
-            status,
-            insertions,
-            deletions,
-        });
+        files.push(DiffFile { path: file_path, status, insertions, deletions });
     }
 
     Ok(files)
 }
 
-pub(crate) fn check_diff_errors(
-    output: &Output,
-    ref_range: Option<&str>,
-) -> Result<(), DiffError> {
+pub(crate) fn check_diff_errors(output: &Output, ref_range: Option<&str>) -> Result<(), DiffError> {
     if output.status.success() {
         return Ok(());
     }
@@ -165,16 +140,12 @@ pub(crate) fn check_diff_errors(
     let code = output.status.code().unwrap_or(-1);
 
     if stderr.contains("unknown revision") || stderr.contains("bad revision") {
-        let reference = ref_range
-            .unwrap_or("unknown")
-            .to_string();
+        let reference = ref_range.unwrap_or("unknown").to_string();
         return Err(DiffError::RefNotFound { reference });
     }
 
     if stderr.contains("invalid range") || stderr.contains("bad range") {
-        let range = ref_range
-            .unwrap_or("unknown")
-            .to_string();
+        let range = ref_range.unwrap_or("unknown").to_string();
         return Err(DiffError::InvalidRange { range });
     }
 
@@ -186,10 +157,7 @@ pub(crate) fn check_diff_errors(
     }))
 }
 
-pub(crate) fn build_diff_result(
-    files: Vec<DiffFile>,
-    raw_output: &Output,
-) -> DiffResult {
+pub(crate) fn build_diff_result(files: Vec<DiffFile>, raw_output: &Output) -> DiffResult {
     let raw = stdout_string(raw_output);
 
     let stats = DiffStats {

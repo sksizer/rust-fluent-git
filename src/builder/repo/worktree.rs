@@ -3,8 +3,8 @@ mod remove;
 
 use std::path::PathBuf;
 
-use crate::error::CommandError;
 use crate::cmd::git;
+use crate::error::CommandError;
 
 pub struct WorktreeBuilder {
     cwd: PathBuf,
@@ -29,11 +29,7 @@ impl WorktreeBuilder {
 
     /// `git worktree remove [--force] <path>`
     pub fn remove(self, path: impl Into<PathBuf>) -> Remove {
-        Remove {
-            cwd: self.cwd,
-            path: path.into(),
-            force: false,
-        }
+        Remove { cwd: self.cwd, path: path.into(), force: false }
     }
 }
 
