@@ -1,0 +1,15 @@
+[package]
+name = "fluent-sdlc"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Fluent builder-pattern wrappers for SDLC command-line tools"
+
+[features]
+default = ["git"]
+git = ["dep:fluent-git"]
+
+[dependencies]
+fluent-core = { workspace = true }
+fluent-git = { workspace = true, optional = true }

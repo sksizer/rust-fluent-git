@@ -18,14 +18,14 @@ rustc := require("rustc")
 default:
     @just --list
 
-# Build the library
+# Build all crates
 build:
-    cargo build
+    cargo build --workspace
 
 # Run all code checks
 full-check:
     cargo fmt --all --check
-    cargo clippy -- --deny warnings
+    cargo clippy --workspace -- --deny warnings
 alias fc := full-check
 
 # Auto-fix formatting
@@ -35,11 +35,11 @@ alias fw := full-write
 
 # Run sync (blocking) tests
 test:
-    cargo test
+    cargo test --workspace
 
 # Run async (tokio) tests
 test-async:
-    cargo test --no-default-features --features tokio
+    cargo test --workspace --no-default-features --features tokio
 
 # Run both sync and async tests
 test-all: test test-async

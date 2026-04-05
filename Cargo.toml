@@ -1,22 +1,17 @@
-[package]
-name = "fluent_git"
-version = "0.1.0"
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
 edition = "2024"
-authors = ["sksizer"]
-description = "A fluent builder-pattern API for git operations"
-homepage = "https://github.com/sksizer/rust-fluent-git"
 license = "MIT"
+authors = ["sksizer"]
 
-[features]
-default = ["blocking"]
-blocking = []
-tokio = ["dep:tokio", "cmd-spec/tokio"]
-
-[dependencies]
+[workspace.dependencies]
 cmd-spec = "0.1.0"
 thiserror = "2.0.18"
-tokio = { version = "1", features = ["process"], optional = true }
+tokio = { version = "1", features = ["process"] }
 which = "8.0.2"
-
-[dev-dependencies]
-tokio = { version = "1", features = ["macros", "rt-multi-thread", "process"] }
+fluent-core = { path = "crates/fluent-core" }
+fluent-git = { path = "crates/fluent-git" }
+fluent-sdlc = { path = "crates/fluent-sdlc" }
