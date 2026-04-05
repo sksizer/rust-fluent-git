@@ -1,0 +1,18 @@
+[package]
+name = "fluent-core"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Shared execution infrastructure for fluent CLI tool wrappers"
+
+[features]
+default = ["blocking"]
+blocking = []
+tokio = ["dep:tokio", "cmd-spec/tokio"]
+
+[dependencies]
+cmd-spec.workspace = true
+thiserror.workspace = true
+which.workspace = true
+tokio = { workspace = true, optional = true }
