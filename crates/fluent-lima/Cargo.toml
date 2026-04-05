@@ -1,0 +1,24 @@
+[package]
+name = "fluent-lima"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "A fluent builder-pattern API for Lima (limactl) VM operations"
+
+[features]
+default = ["blocking"]
+blocking = ["fluent-core/blocking"]
+tokio = ["fluent-core/tokio", "dep:tokio"]
+
+[dependencies]
+fluent-core.workspace = true
+cmd-spec.workspace = true
+thiserror.workspace = true
+which.workspace = true
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, optional = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "process"] }

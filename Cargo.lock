@@ -76,6 +76,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "fluent-lima"
+version = "0.1.0"
+dependencies = [
+ "cmd-spec",
+ "fluent-core",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "which",
+]
+
+[[package]]
 name = "fluent-sdlc"
 version = "0.1.0"
 dependencies = [
@@ -83,6 +96,7 @@ dependencies = [
  "fluent-core",
  "fluent-gh",
  "fluent-git",
+ "fluent-lima",
 ]
 
 [[package]]

@@ -18,4 +18,5 @@ fluent-claude = { path = "crates/fluent-claude" }
 fluent-core = { path = "crates/fluent-core" }
 fluent-gh = { path = "crates/fluent-gh" }
 fluent-git = { path = "crates/fluent-git" }
+fluent-lima = { path = "crates/fluent-lima" }
 fluent-sdlc = { path = "crates/fluent-sdlc" }
