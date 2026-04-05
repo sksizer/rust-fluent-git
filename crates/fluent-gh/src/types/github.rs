@@ -1,4 +1,7 @@
-use crate::ops::{IssueBuilder, PrBuilder, ReleaseBuilder, RepoBuilder, RunBuilder, WorkflowBuilder};
+use crate::ops::{
+    ApiBuilder, AuthBuilder, IssueBuilder, LabelBuilder, PrBuilder, ReleaseBuilder, RepoBuilder, RunBuilder,
+    SecretBuilder, VariableBuilder, WorkflowBuilder,
+};
 
 /// Entry point for GitHub CLI operations.
 ///
@@ -29,6 +32,16 @@ impl GitHub {
         &self.repo
     }
 
+    /// Start building a `gh api` command.
+    pub fn api(&self, endpoint: impl Into<String>) -> ApiBuilder<'_> {
+        ApiBuilder::new(self, endpoint)
+    }
+
+    /// Start building a `gh auth` command.
+    pub fn auth(&self) -> AuthBuilder<'_> {
+        AuthBuilder::new(self)
+    }
+
     /// Start building a `gh pr` command.
     pub fn pr(&self) -> PrBuilder<'_> {
         PrBuilder::new(self)
@@ -54,8 +67,23 @@ impl GitHub {
         RunBuilder::new(self)
     }
 
+    /// Start building a `gh secret` command.
+    pub fn secret(&self) -> SecretBuilder<'_> {
+        SecretBuilder::new(self)
+    }
+
+    /// Start building a `gh variable` command.
+    pub fn variable(&self) -> VariableBuilder<'_> {
+        VariableBuilder::new(self)
+    }
+
     /// Start building a `gh workflow` command.
     pub fn workflow(&self) -> WorkflowBuilder<'_> {
         WorkflowBuilder::new(self)
+    }
+
+    /// Start building a `gh label` command.
+    pub fn label(&self) -> LabelBuilder<'_> {
+        LabelBuilder::new(self)
     }
 }

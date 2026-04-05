@@ -1,17 +1,25 @@
+mod auth;
 mod common;
 mod github;
 mod issue;
+mod label;
 mod pr;
 mod release;
 mod repo;
 mod run;
+mod secret;
+mod variable;
 mod workflow;
 
+pub use auth::AuthStatus;
 pub use common::{GhLabel, GhUser};
 pub use github::GitHub;
 pub use issue::{IssueCreateResult, IssueInfo};
+pub use label::LabelInfo;
 pub use pr::{PrCreateResult, PrInfo, PrMergeResult};
 pub use release::{ReleaseAsset, ReleaseCreateResult, ReleaseInfo};
 pub use repo::{RepoCreateResult, RepoInfo};
 pub use run::{RunInfo, RunRerunResult};
+pub use secret::SecretInfo;
+pub use variable::VariableInfo;
 pub use workflow::WorkflowInfo;

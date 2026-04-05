@@ -1,6 +1,11 @@
+mod api;
+mod auth;
 mod issue;
+mod label;
 mod pr;
 mod release;
 mod repo;
 mod run;
+mod secret;
+mod variable;
 mod workflow;
