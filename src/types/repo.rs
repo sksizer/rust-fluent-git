@@ -1,9 +1,9 @@
 use std::path::{Path, PathBuf};
 
 use crate::ops::{
-    AddBuilder, BranchBuilder, CheckoutBuilder, CherryPickBuilder, CleanBuilder, CommitBuilder,
-    ConfigBuilder, DiffBuilder, LogBuilder, MergeBuilder, RebaseBuilder, RemoteBuilder,
-    ResetBuilder, RevParseBuilder, StashBuilder, StatusBuilder, TagBuilder, WorktreeBuilder,
+    AddBuilder, BranchBuilder, CheckoutBuilder, CherryPickBuilder, CleanBuilder, CommitBuilder, ConfigBuilder,
+    DiffBuilder, LogBuilder, MergeBuilder, RebaseBuilder, RemoteBuilder, ResetBuilder, RevParseBuilder, StashBuilder,
+    StatusBuilder, TagBuilder, WorktreeBuilder,
 };
 
 /// Handle to a git repository. Proof that setup succeeded.

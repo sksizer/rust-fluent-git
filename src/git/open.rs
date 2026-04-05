@@ -21,24 +21,16 @@ pub async fn open(path: impl AsRef<Path>) -> Result<Repo, OpenError> {
     let abs_path = if path.is_absolute() {
         path.to_path_buf()
     } else {
-        std::env::current_dir()
-            .map_err(OpenError::Io)?
-            .join(path)
+        std::env::current_dir().map_err(OpenError::Io)?.join(path)
     };
 
     // Check accessibility before running git.
     if !abs_path.exists() {
-        return Err(OpenError::NotAccessible {
-            path: abs_path,
-            reason: "path does not exist".to_string(),
-        });
+        return Err(OpenError::NotAccessible { path: abs_path, reason: "path does not exist".to_string() });
     }
 
-    let cmd = ShellCommand::new("git")
-        .arg("-C")
-        .arg(abs_path.to_string_lossy().as_ref())
-        .arg("rev-parse")
-        .arg("--git-dir");
+    let cmd =
+        ShellCommand::new("git").arg("-C").arg(abs_path.to_string_lossy().as_ref()).arg("rev-parse").arg("--git-dir");
 
     let output = run_async(&cmd).await?;
 

@@ -1,4 +1,3 @@
-mod repo;
 mod add;
 mod branch;
 mod checkout;
@@ -11,6 +10,7 @@ mod init;
 mod log;
 mod merge;
 mod remote;
+mod repo;
 mod reset;
 mod rev_parse;
 mod setup;
@@ -19,7 +19,6 @@ mod status;
 mod tag;
 mod worktree;
 
-pub use repo::Repo;
 pub use add::AddResult;
 pub use branch::BranchInfo;
 pub use clean::CleanResult;
@@ -30,14 +29,15 @@ pub use init::InitResult;
 pub use log::LogEntry;
 pub use merge::MergeResult;
 pub use remote::RemoteInfo;
+pub use repo::Repo;
 pub use reset::{ResetMode, ResetResult};
 pub use setup::GitInfo;
 pub use stash::StashEntry;
 pub use status::StatusResult;
 pub use tag::TagInfo;
 pub use worktree::{
-    WorktreeAddResult, WorktreeInfo, WorktreeListResult, WorktreeLockResult, WorktreeMoveResult,
-    WorktreePruneResult, WorktreeRemoveResult,
+    WorktreeAddResult, WorktreeInfo, WorktreeListResult, WorktreeLockResult, WorktreeMoveResult, WorktreePruneResult,
+    WorktreeRemoveResult,
 };
 
 // Shared types used across multiple domains

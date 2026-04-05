@@ -7,7 +7,7 @@ use cmd_spec::ShellCommand;
 
 use crate::error::{CommandError, WorktreeError};
 use crate::run::{stderr_string, stdout_string};
-use crate::types::{WorktreeInfo, WorktreeLockResult, WorktreeListResult};
+use crate::types::{WorktreeInfo, WorktreeListResult, WorktreeLockResult};
 
 // ══════════════════════════════════════════════════════════════════════════════
 // Entry point
@@ -25,59 +25,37 @@ impl<'a> WorktreeBuilder<'a> {
 
     /// Add a new worktree at `path` for `branch`.
     pub fn add(self, path: impl Into<PathBuf>, branch: impl Into<String>) -> WorktreeAddBuilder<'a> {
-        WorktreeAddBuilder {
-            repo_path: self.repo_path,
-            path: path.into(),
-            branch: branch.into(),
-        }
+        WorktreeAddBuilder { repo_path: self.repo_path, path: path.into(), branch: branch.into() }
     }
 
     /// Remove a worktree at `path`.
     pub fn remove(self, path: impl Into<PathBuf>) -> WorktreeRemoveBuilder<'a> {
-        WorktreeRemoveBuilder {
-            repo_path: self.repo_path,
-            path: path.into(),
-        }
+        WorktreeRemoveBuilder { repo_path: self.repo_path, path: path.into() }
     }
 
     /// List all worktrees.
     pub fn list(self) -> WorktreeListBuilder<'a> {
-        WorktreeListBuilder {
-            repo_path: self.repo_path,
-        }
+        WorktreeListBuilder { repo_path: self.repo_path }
     }
 
     /// Move a worktree from `old_path` to `new_path`.
     pub fn move_to(self, old_path: impl Into<PathBuf>, new_path: impl Into<PathBuf>) -> WorktreeMoveBuilder<'a> {
-        WorktreeMoveBuilder {
-            repo_path: self.repo_path,
-            old_path: old_path.into(),
-            new_path: new_path.into(),
-        }
+        WorktreeMoveBuilder { repo_path: self.repo_path, old_path: old_path.into(), new_path: new_path.into() }
     }
 
     /// Lock a worktree at `path`.
     pub fn lock(self, path: impl Into<PathBuf>) -> WorktreeLockBuilder<'a> {
-        WorktreeLockBuilder {
-            repo_path: self.repo_path,
-            path: path.into(),
-            reason: None,
-        }
+        WorktreeLockBuilder { repo_path: self.repo_path, path: path.into(), reason: None }
     }
 
     /// Unlock a worktree at `path`.
     pub fn unlock(self, path: impl Into<PathBuf>) -> WorktreeUnlockBuilder<'a> {
-        WorktreeUnlockBuilder {
-            repo_path: self.repo_path,
-            path: path.into(),
-        }
+        WorktreeUnlockBuilder { repo_path: self.repo_path, path: path.into() }
     }
 
     /// Prune stale worktree metadata.
     pub fn prune(self) -> WorktreePruneBuilder<'a> {
-        WorktreePruneBuilder {
-            repo_path: self.repo_path,
-        }
+        WorktreePruneBuilder { repo_path: self.repo_path }
     }
 }
 
@@ -127,11 +105,7 @@ impl<'a> WorktreeAddBuilder<'a> {
 
     /// Build `git rev-parse HEAD` to get the SHA after adding.
     pub(crate) fn build_rev_parse_command(&self) -> ShellCommand {
-        ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.path.to_string_lossy().as_ref())
-            .arg("rev-parse")
-            .arg("HEAD")
+        ShellCommand::new("git").arg("-C").arg(self.path.to_string_lossy().as_ref()).arg("rev-parse").arg("HEAD")
     }
 
     pub(crate) fn path(&self) -> &Path {
@@ -160,16 +134,11 @@ pub(crate) fn parse_add_output(output: &Output, path: &Path, branch: &str) -> Re
     let lower = stderr.to_lowercase();
 
     if lower.contains("already checked out") || lower.contains("is already used by worktree") {
-        return Err(WorktreeError::BranchInUse {
-            branch: branch.to_string(),
-            path: path.to_path_buf(),
-        });
+        return Err(WorktreeError::BranchInUse { branch: branch.to_string(), path: path.to_path_buf() });
     }
 
     if lower.contains("already exists") {
-        return Err(WorktreeError::AlreadyExists {
-            path: path.to_path_buf(),
-        });
+        return Err(WorktreeError::AlreadyExists { path: path.to_path_buf() });
     }
 
     Err(WorktreeError::Command(CommandError::Failed {
@@ -221,15 +190,11 @@ pub(crate) fn parse_remove_output(output: &Output, path: &Path) -> Result<(), Wo
     let lower = stderr.to_lowercase();
 
     if lower.contains("not a working tree") || lower.contains("is not a registered worktree") {
-        return Err(WorktreeError::NotFound {
-            path: path.to_path_buf(),
-        });
+        return Err(WorktreeError::NotFound { path: path.to_path_buf() });
     }
 
     if lower.contains("untracked") || lower.contains("modified") || lower.contains("changes not") {
-        return Err(WorktreeError::DirtyWorktree {
-            path: path.to_path_buf(),
-        });
+        return Err(WorktreeError::DirtyWorktree { path: path.to_path_buf() });
     }
 
     if lower.contains("main working tree") || lower.contains("cannot remove main") {
@@ -302,10 +267,7 @@ pub(crate) fn parse_list_output(output: &Output) -> Result<WorktreeListResult, W
                 sha = rest.to_string();
             } else if let Some(rest) = line.strip_prefix("branch ") {
                 // Convert refs/heads/main -> main
-                branch = rest
-                    .strip_prefix("refs/heads/")
-                    .unwrap_or(rest)
-                    .to_string();
+                branch = rest.strip_prefix("refs/heads/").unwrap_or(rest).to_string();
             } else if line.starts_with("locked") {
                 locked = true;
             } else if line == "detached" {
@@ -315,25 +277,16 @@ pub(crate) fn parse_list_output(output: &Output) -> Result<WorktreeListResult, W
 
         let is_main = worktrees.is_empty(); // first block is main
 
-        worktrees.push(WorktreeInfo {
-            path,
-            branch,
-            sha,
-            is_main,
-            locked,
-        });
+        worktrees.push(WorktreeInfo { path, branch, sha, is_main, locked });
     }
 
-    let main = worktrees
-        .first()
-        .cloned()
-        .unwrap_or_else(|| WorktreeInfo {
-            path: PathBuf::new(),
-            branch: String::new(),
-            sha: String::new(),
-            is_main: true,
-            locked: false,
-        });
+    let main = worktrees.first().cloned().unwrap_or_else(|| WorktreeInfo {
+        path: PathBuf::new(),
+        branch: String::new(),
+        sha: String::new(),
+        is_main: true,
+        locked: false,
+    });
 
     Ok(WorktreeListResult { worktrees, main })
 }
@@ -381,9 +334,7 @@ pub(crate) fn parse_move_output(output: &Output, old_path: &Path) -> Result<(), 
     let lower = stderr.to_lowercase();
 
     if lower.contains("not a working tree") || lower.contains("is not a registered worktree") {
-        return Err(WorktreeError::NotFound {
-            path: old_path.to_path_buf(),
-        });
+        return Err(WorktreeError::NotFound { path: old_path.to_path_buf() });
     }
 
     if lower.contains("main working tree") || lower.contains("cannot move main") {
@@ -439,7 +390,11 @@ impl<'a> WorktreeLockBuilder<'a> {
     }
 }
 
-pub(crate) fn parse_lock_output(output: &Output, path: &Path, reason: Option<&str>) -> Result<WorktreeLockResult, WorktreeError> {
+pub(crate) fn parse_lock_output(
+    output: &Output,
+    path: &Path,
+    reason: Option<&str>,
+) -> Result<WorktreeLockResult, WorktreeError> {
     if output.status.success() {
         return Ok(WorktreeLockResult {
             path: path.to_path_buf(),
@@ -460,9 +415,7 @@ pub(crate) fn parse_lock_output(output: &Output, path: &Path, reason: Option<&st
     }
 
     if lower.contains("not a working tree") || lower.contains("is not a registered worktree") {
-        return Err(WorktreeError::NotFound {
-            path: path.to_path_buf(),
-        });
+        return Err(WorktreeError::NotFound { path: path.to_path_buf() });
     }
 
     Err(WorktreeError::Command(CommandError::Failed {
@@ -511,9 +464,7 @@ pub(crate) fn parse_unlock_output(output: &Output, path: &Path) -> Result<(), Wo
     }
 
     if lower.contains("not a working tree") || lower.contains("is not a registered worktree") {
-        return Err(WorktreeError::NotFound {
-            path: path.to_path_buf(),
-        });
+        return Err(WorktreeError::NotFound { path: path.to_path_buf() });
     }
 
     Err(WorktreeError::Command(CommandError::Failed {
@@ -545,11 +496,7 @@ impl<'a> WorktreePruneBuilder<'a> {
 
     /// Build the actual prune command.
     pub(crate) fn build_command(&self) -> ShellCommand {
-        ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("worktree")
-            .arg("prune")
+        ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("worktree").arg("prune")
     }
 }
 
@@ -621,10 +568,7 @@ pub(crate) fn find_branch_for_path(list_output: &Output, path: &Path) -> String 
             current_path = PathBuf::from(rest);
             current_branch.clear();
         } else if let Some(rest) = line.strip_prefix("branch ") {
-            current_branch = rest
-                .strip_prefix("refs/heads/")
-                .unwrap_or(rest)
-                .to_string();
+            current_branch = rest.strip_prefix("refs/heads/").unwrap_or(rest).to_string();
         } else if line.is_empty() {
             if current_path == path {
                 return current_branch;

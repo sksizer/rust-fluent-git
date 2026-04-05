@@ -18,11 +18,7 @@ pub struct ResetBuilder<'a> {
 
 impl<'a> ResetBuilder<'a> {
     pub(crate) fn new(repo_path: &'a Path) -> Self {
-        Self {
-            repo_path,
-            mode: ResetMode::Mixed,
-            target: None,
-        }
+        Self { repo_path, mode: ResetMode::Mixed, target: None }
     }
 
     /// Use soft reset (keep changes staged).
@@ -50,10 +46,7 @@ impl<'a> ResetBuilder<'a> {
     }
 
     pub(crate) fn build_reset_command(&self) -> ShellCommand {
-        let mut cmd = ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("reset");
+        let mut cmd = ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("reset");
 
         match self.mode {
             ResetMode::Soft => cmd = cmd.arg("--soft"),
@@ -69,11 +62,7 @@ impl<'a> ResetBuilder<'a> {
     }
 
     pub(crate) fn build_rev_parse_command(&self) -> ShellCommand {
-        ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("rev-parse")
-            .arg("HEAD")
+        ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("rev-parse").arg("HEAD")
     }
 
     pub(crate) fn mode(&self) -> &ResetMode {
@@ -114,8 +103,5 @@ pub(crate) fn parse_reset_output(output: &Output, target: &Option<String>) -> Re
 /// Parse the rev-parse output to get the new HEAD sha.
 pub(crate) fn parse_rev_parse_for_reset(output: &Output, mode: &ResetMode) -> Result<ResetResult, ResetError> {
     let sha = stdout_string(output);
-    Ok(ResetResult {
-        sha,
-        mode: mode.clone(),
-    })
+    Ok(ResetResult { sha, mode: mode.clone() })
 }

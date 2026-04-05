@@ -38,11 +38,7 @@ impl Default for GitCommand {
 }
 impl GitCommand {
     pub fn new() -> Self {
-        Self {
-            args: Vec::new(),
-            cwd: None,
-            envs: Vec::new(),
-        }
+        Self { args: Vec::new(), cwd: None, envs: Vec::new() }
     }
 
     pub fn dir(&mut self, cwd: impl Into<PathBuf>) -> &mut Self {

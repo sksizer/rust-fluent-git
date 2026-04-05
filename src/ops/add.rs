@@ -18,11 +18,7 @@ pub struct AddBuilder<'a> {
 
 impl<'a> AddBuilder<'a> {
     pub(crate) fn new(repo_path: &'a Path) -> Self {
-        Self {
-            repo_path,
-            paths: Vec::new(),
-            all: false,
-        }
+        Self { repo_path, paths: Vec::new(), all: false }
     }
 
     /// Add a specific file path to stage.
@@ -43,10 +39,7 @@ impl<'a> AddBuilder<'a> {
     }
 
     pub(crate) fn build_add_command(&self) -> ShellCommand {
-        let mut cmd = ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("add");
+        let mut cmd = ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("add");
 
         if self.all {
             cmd = cmd.arg("--all");
@@ -122,10 +115,6 @@ pub(crate) fn parse_add_output(output: &Output, paths: &[String]) -> Result<(), 
 
 pub(crate) fn parse_staged_files(output: &Output) -> AddResult {
     let stdout = stdout_string(output);
-    let files: Vec<String> = stdout
-        .lines()
-        .filter(|l| !l.is_empty())
-        .map(|l| l.to_string())
-        .collect();
+    let files: Vec<String> = stdout.lines().filter(|l| !l.is_empty()).map(|l| l.to_string()).collect();
     AddResult { files }
 }

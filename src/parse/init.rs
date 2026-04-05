@@ -2,7 +2,7 @@
 //!
 //! Used by both sync and async implementations.
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Output;
 
 use crate::error::{CommandError, InitError};
@@ -56,27 +56,20 @@ fn extract_branch_from_output(_stdout: &str) -> Option<String> {
 }
 
 /// Classify a failed `git init` into a specific error variant.
-fn classify_error(
-    stderr: String,
-    path: &PathBuf,
-    requested_branch: Option<&str>,
-) -> InitError {
+fn classify_error(stderr: String, path: &Path, requested_branch: Option<&str>) -> InitError {
     let lower = stderr.to_lowercase();
 
     if lower.contains("permission denied") {
-        return InitError::PermissionDenied { path: path.clone() };
+        return InitError::PermissionDenied { path: path.to_path_buf() };
     }
 
     if lower.contains("invalid branch name") || lower.contains("not a valid branch name") {
         let name = requested_branch.unwrap_or("<unknown>").to_string();
-        return InitError::InvalidBranchName {
-            name,
-            reason: stderr.clone(),
-        };
+        return InitError::InvalidBranchName { name, reason: stderr.clone() };
     }
 
     if lower.contains("already exists") {
-        return InitError::AlreadyExists { path: path.clone() };
+        return InitError::AlreadyExists { path: path.to_path_buf() };
     }
 
     // Fall through: generic command error.
@@ -95,11 +88,7 @@ mod tests {
     use std::process::ExitStatus;
 
     fn success_output(stdout: &str) -> Output {
-        Output {
-            status: ExitStatus::from_raw(0),
-            stdout: stdout.as_bytes().to_vec(),
-            stderr: Vec::new(),
-        }
+        Output { status: ExitStatus::from_raw(0), stdout: stdout.as_bytes().to_vec(), stderr: Vec::new() }
     }
 
     fn failure_output(stderr: &str) -> Output {
@@ -112,11 +101,8 @@ mod tests {
 
     #[test]
     fn parse_success_default_branch() {
-        let output = success_output(
-            "Initialized empty Git repository in /tmp/test/.git/\n",
-        );
-        let result =
-            parse_init_output(output, PathBuf::from("/tmp/test"), false, None).unwrap();
+        let output = success_output("Initialized empty Git repository in /tmp/test/.git/\n");
+        let result = parse_init_output(output, PathBuf::from("/tmp/test"), false, None).unwrap();
         assert_eq!(result.path, PathBuf::from("/tmp/test"));
         assert_eq!(result.branch, "main");
         assert!(!result.bare);
@@ -124,54 +110,29 @@ mod tests {
 
     #[test]
     fn parse_success_explicit_branch() {
-        let output = success_output(
-            "Initialized empty Git repository in /tmp/test/.git/\n",
-        );
-        let result = parse_init_output(
-            output,
-            PathBuf::from("/tmp/test"),
-            false,
-            Some("develop"),
-        )
-        .unwrap();
+        let output = success_output("Initialized empty Git repository in /tmp/test/.git/\n");
+        let result = parse_init_output(output, PathBuf::from("/tmp/test"), false, Some("develop")).unwrap();
         assert_eq!(result.branch, "develop");
     }
 
     #[test]
     fn parse_success_bare() {
-        let output = success_output(
-            "Initialized empty Git repository in /tmp/test/\n",
-        );
-        let result =
-            parse_init_output(output, PathBuf::from("/tmp/test"), true, None).unwrap();
+        let output = success_output("Initialized empty Git repository in /tmp/test/\n");
+        let result = parse_init_output(output, PathBuf::from("/tmp/test"), true, None).unwrap();
         assert!(result.bare);
     }
 
     #[test]
     fn parse_permission_denied() {
         let output = failure_output("fatal: cannot mkdir /root/test: Permission denied\n");
-        let err = parse_init_output(
-            output,
-            PathBuf::from("/root/test"),
-            false,
-            None,
-        )
-        .unwrap_err();
+        let err = parse_init_output(output, PathBuf::from("/root/test"), false, None).unwrap_err();
         assert!(matches!(err, InitError::PermissionDenied { .. }));
     }
 
     #[test]
     fn parse_invalid_branch_name() {
-        let output = failure_output(
-            "fatal: 'bad..name' is not a valid branch name\n",
-        );
-        let err = parse_init_output(
-            output,
-            PathBuf::from("/tmp/test"),
-            false,
-            Some("bad..name"),
-        )
-        .unwrap_err();
+        let output = failure_output("fatal: 'bad..name' is not a valid branch name\n");
+        let err = parse_init_output(output, PathBuf::from("/tmp/test"), false, Some("bad..name")).unwrap_err();
         assert!(matches!(err, InitError::InvalidBranchName { .. }));
     }
 }

@@ -1,6 +1,6 @@
 use crate::error::RemoteError;
-use crate::ops::remote::{parse_add_output, parse_remove_output, parse_list_output};
-use crate::ops::{RemoteAddBuilder, RemoteRemoveBuilder, RemoteListBuilder};
+use crate::ops::remote::{parse_add_output, parse_list_output, parse_remove_output};
+use crate::ops::{RemoteAddBuilder, RemoteListBuilder, RemoteRemoveBuilder};
 use crate::types::RemoteInfo;
 
 #[cfg(not(feature = "tokio"))]

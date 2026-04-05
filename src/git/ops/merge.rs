@@ -1,6 +1,6 @@
 use crate::error::MergeError;
-use crate::ops::merge::{parse_merge_details, parse_merge_output};
 use crate::ops::MergeBuilder;
+use crate::ops::merge::{parse_merge_details, parse_merge_output};
 use crate::run::stdout_string;
 use crate::types::MergeResult;
 

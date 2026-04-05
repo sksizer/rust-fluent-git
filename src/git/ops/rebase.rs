@@ -1,6 +1,6 @@
 use crate::error::RebaseError;
-use crate::ops::rebase::parse_rebase_output;
 use crate::ops::RebaseBuilder;
+use crate::ops::rebase::parse_rebase_output;
 
 #[cfg(not(feature = "blocking"))]
 impl<'a> RebaseBuilder<'a> {

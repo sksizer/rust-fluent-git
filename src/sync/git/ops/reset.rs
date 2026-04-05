@@ -1,6 +1,6 @@
 use crate::error::ResetError;
-use crate::ops::reset::{parse_reset_output, parse_rev_parse_for_reset};
 use crate::ops::ResetBuilder;
+use crate::ops::reset::{parse_reset_output, parse_rev_parse_for_reset};
 use crate::types::ResetResult;
 
 #[cfg(not(feature = "tokio"))]

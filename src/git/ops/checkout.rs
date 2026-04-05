@@ -1,6 +1,6 @@
 use crate::error::CheckoutError;
-use crate::ops::checkout::parse_checkout_output;
 use crate::ops::CheckoutBranchBuilder;
+use crate::ops::checkout::parse_checkout_output;
 
 #[cfg(not(feature = "blocking"))]
 impl<'a> CheckoutBranchBuilder<'a> {

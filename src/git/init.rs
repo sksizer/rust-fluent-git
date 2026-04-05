@@ -24,11 +24,7 @@ use crate::types::InitResult;
 /// # }
 /// ```
 pub fn init(path: &Path) -> AsyncInitBuilder {
-    AsyncInitBuilder {
-        path: path.to_path_buf(),
-        bare: false,
-        branch: None,
-    }
+    AsyncInitBuilder { path: path.to_path_buf(), bare: false, branch: None }
 }
 
 /// Builder for an asynchronous `git init` command.

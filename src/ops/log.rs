@@ -24,12 +24,7 @@ pub struct LogBuilder<'a> {
 
 impl<'a> LogBuilder<'a> {
     pub(crate) fn new(repo_path: &'a Path) -> Self {
-        Self {
-            repo_path,
-            max_count: None,
-            oneline: false,
-            author: None,
-        }
+        Self { repo_path, max_count: None, oneline: false, author: None }
     }
 
     /// Limit the number of commits returned.
@@ -57,9 +52,7 @@ impl<'a> LogBuilder<'a> {
     }
 
     pub(crate) fn build_command(&self) -> ShellCommand {
-        let format_str = format!(
-            "%H{SEP}%h{SEP}%s{SEP}%D{SEP}%an{SEP}%ae{SEP}%aI{RECORD_SEP}"
-        );
+        let format_str = format!("%H{SEP}%h{SEP}%s{SEP}%D{SEP}%an{SEP}%ae{SEP}%aI{RECORD_SEP}");
 
         let mut cmd = ShellCommand::new("git")
             .arg("-C")
@@ -118,20 +111,13 @@ pub(crate) fn parse_log_output(output: &Output) -> Result<Vec<LogEntry>, LogErro
             continue;
         }
 
-        let refs: Vec<String> = fields[3]
-            .split(',')
-            .map(|s| s.trim().to_string())
-            .filter(|s| !s.is_empty())
-            .collect();
+        let refs: Vec<String> = fields[3].split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect();
 
         entries.push(LogEntry {
             sha: fields[0].to_string(),
             short_sha: fields[1].to_string(),
             message: fields[2].to_string(),
-            author: Author {
-                name: fields[4].to_string(),
-                email: fields[5].to_string(),
-            },
+            author: Author { name: fields[4].to_string(), email: fields[5].to_string() },
             timestamp: fields[6].to_string(),
             refs,
         });

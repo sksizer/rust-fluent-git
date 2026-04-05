@@ -1,6 +1,6 @@
 use crate::error::CleanError;
-use crate::ops::clean::parse_clean_output;
 use crate::ops::CleanBuilder;
+use crate::ops::clean::parse_clean_output;
 use crate::types::CleanResult;
 
 #[cfg(not(feature = "tokio"))]

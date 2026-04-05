@@ -1,9 +1,9 @@
 mod add;
-mod commit;
 mod branch;
 mod checkout;
 mod cherry_pick;
 mod clean;
+mod commit;
 mod config;
 mod diff;
 mod log;

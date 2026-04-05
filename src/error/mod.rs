@@ -56,12 +56,7 @@ pub use worktree::WorktreeError;
 #[derive(Debug, thiserror::Error)]
 pub enum CommandError {
     #[error("command `git {args}` failed (exit code {code}):\n{stderr}")]
-    Failed {
-        args: String,
-        code: i32,
-        stdout: String,
-        stderr: String,
-    },
+    Failed { args: String, code: i32, stdout: String, stderr: String },
 
     #[error("command `git {args}` timed out after {timeout_secs}s")]
     Timeout { args: String, timeout_secs: u64 },

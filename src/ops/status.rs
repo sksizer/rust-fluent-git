@@ -17,10 +17,7 @@ pub struct StatusBuilder<'a> {
 
 impl<'a> StatusBuilder<'a> {
     pub(crate) fn new(repo_path: &'a Path) -> Self {
-        Self {
-            repo_path,
-            short: false,
-        }
+        Self { repo_path, short: false }
     }
 
     /// Show short-format output.
@@ -61,9 +58,7 @@ pub(crate) fn parse_status_output(output: &Output) -> Result<StatusResult, Statu
         }
 
         if stderr.contains("index file corrupt") {
-            return Err(StatusError::CorruptIndex {
-                reason: stderr.clone(),
-            });
+            return Err(StatusError::CorruptIndex { reason: stderr.clone() });
         }
 
         return Err(StatusError::Command(CommandError::Failed {
@@ -130,34 +125,19 @@ pub(crate) fn parse_status_output(output: &Output) -> Result<StatusResult, Statu
                 // Index (staged) status
                 if x != b' ' && x != b'?' {
                     let status = char_to_file_status(x);
-                    staged.push(FileChange {
-                        path: file_path.clone(),
-                        status,
-                        old_path: old_path.clone(),
-                    });
+                    staged.push(FileChange { path: file_path.clone(), status, old_path: old_path.clone() });
                 }
 
                 // Worktree (modified) status
                 if y != b' ' && y != b'?' {
                     let status = char_to_file_status(y);
-                    modified.push(FileChange {
-                        path: file_path,
-                        status,
-                        old_path,
-                    });
+                    modified.push(FileChange { path: file_path, status, old_path });
                 }
             }
         }
     }
 
-    Ok(StatusResult {
-        branch,
-        staged,
-        modified,
-        untracked,
-        ahead,
-        behind,
-    })
+    Ok(StatusResult { branch, staged, modified, untracked, ahead, behind })
 }
 
 fn char_to_file_status(c: u8) -> FileStatus {

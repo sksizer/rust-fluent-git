@@ -16,10 +16,7 @@ pub struct CherryPickBuilder<'a> {
 
 impl<'a> CherryPickBuilder<'a> {
     pub(crate) fn new(repo_path: &'a Path) -> Self {
-        Self {
-            repo_path,
-            sha: None,
-        }
+        Self { repo_path, sha: None }
     }
 
     /// Set the commit SHA to cherry-pick.
@@ -29,10 +26,8 @@ impl<'a> CherryPickBuilder<'a> {
     }
 
     pub(crate) fn build_command(&self) -> ShellCommand {
-        let mut cmd = ShellCommand::new("git")
-            .arg("-C")
-            .arg(self.repo_path.to_string_lossy().as_ref())
-            .arg("cherry-pick");
+        let mut cmd =
+            ShellCommand::new("git").arg("-C").arg(self.repo_path.to_string_lossy().as_ref()).arg("cherry-pick");
 
         if let Some(ref sha) = self.sha {
             cmd = cmd.arg(sha.as_str());
@@ -75,29 +70,18 @@ pub(crate) fn parse_cherry_pick_output(output: &Output, sha: &Option<String>) ->
         return Err(CherryPickError::DirtyWorkTree { files });
     }
 
-    Err(CherryPickError::Command(CommandError::Failed {
-        args: "cherry-pick".to_string(),
-        code,
-        stdout,
-        stderr,
-    }))
+    Err(CherryPickError::Command(CommandError::Failed { args: "cherry-pick".to_string(), code, stdout, stderr }))
 }
 
 fn parse_conflict_files(output: &str) -> Vec<String> {
     output
         .lines()
         .filter(|l| l.contains("CONFLICT"))
-        .filter_map(|l| {
-            l.rsplit("Merge conflict in ").next().map(|s| s.trim().to_string())
-        })
+        .filter_map(|l| l.rsplit("Merge conflict in ").next().map(|s| s.trim().to_string()))
         .filter(|s| !s.is_empty() && !s.contains("CONFLICT"))
         .collect()
 }
 
 fn parse_dirty_files(output: &str) -> Vec<String> {
-    output
-        .lines()
-        .filter(|l| l.starts_with('\t'))
-        .map(|l| l.trim().to_string())
-        .collect()
+    output.lines().filter(|l| l.starts_with('\t')).map(|l| l.trim().to_string()).collect()
 }

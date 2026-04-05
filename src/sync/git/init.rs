@@ -21,11 +21,7 @@ use crate::types::InitResult;
 /// println!("Initialized at {:?}, branch: {}", result.path, result.branch);
 /// ```
 pub fn init(path: &Path) -> InitBuilder {
-    InitBuilder {
-        path: path.to_path_buf(),
-        bare: false,
-        branch: None,
-    }
+    InitBuilder { path: path.to_path_buf(), bare: false, branch: None }
 }
 
 /// Builder for a synchronous `git init` command.
@@ -98,13 +94,8 @@ mod tests {
 
     #[test]
     fn build_bare_with_branch() {
-        let builder = init(Path::new("/tmp/test"))
-            .bare()
-            .initial_branch("trunk");
+        let builder = init(Path::new("/tmp/test")).bare().initial_branch("trunk");
         let cmd = builder.build_command();
-        assert_eq!(
-            cmd.args,
-            vec!["init", "--bare", "-b", "trunk", "/tmp/test"]
-        );
+        assert_eq!(cmd.args, vec!["init", "--bare", "-b", "trunk", "/tmp/test"]);
     }
 }
