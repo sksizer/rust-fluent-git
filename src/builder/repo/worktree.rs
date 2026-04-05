@@ -3,7 +3,7 @@ mod remove;
 
 use std::path::PathBuf;
 
-use crate::GitError;
+use crate::error::CommandError;
 use crate::cmd::git;
 
 pub struct WorktreeBuilder {
@@ -90,7 +90,7 @@ impl Add {
         self
     }
 
-    pub fn run(&self) -> Result<(), GitError> {
+    pub fn run(&self) -> Result<(), CommandError> {
         let mut cmd = crate::git();
         cmd.dir(&self.cwd);
         cmd.args(&["worktree", "add"]);
@@ -135,7 +135,7 @@ impl Remove {
         self
     }
 
-    pub fn run(&self) -> Result<(), GitError> {
+    pub fn run(&self) -> Result<(), CommandError> {
         let mut git = git();
         let cmd = git.dir(&self.cwd);
         cmd.args(&["worktree", "remove"]);
