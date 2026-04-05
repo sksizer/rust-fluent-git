@@ -56,6 +56,10 @@ For async:
 fluent-git = { version = "0.1", default-features = false, features = ["tokio"] }
 ```
 
+## AI policy
+
+The API was designed and prototyped by hand. Implementation was AI-assisted — the bulk of the code is ergonomic boilerplate (builder structs, error enums, output parsing) that follows repetitive patterns across operations.
+
 ## License
 
 MIT
