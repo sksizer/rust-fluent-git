@@ -29,6 +29,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "fluent-brew"
+version = "0.1.0"
+dependencies = [
+ "cmd-spec",
+ "fluent-core",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "which",
+]
+
+[[package]]
 name = "fluent-claude"
 version = "0.1.0"
 dependencies = [
@@ -92,6 +105,7 @@ dependencies = [
 name = "fluent-sdlc"
 version = "0.1.0"
 dependencies = [
+ "fluent-brew",
  "fluent-claude",
  "fluent-core",
  "fluent-gh",
