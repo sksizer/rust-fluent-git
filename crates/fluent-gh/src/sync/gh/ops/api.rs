@@ -2,7 +2,7 @@ use crate::error::ApiError;
 use crate::ops::ApiBuilder;
 use crate::ops::api::parse_api_output;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> ApiBuilder<'a> {
     pub fn run(self) -> Result<String, ApiError> {
         let endpoint = self.endpoint().to_string();

@@ -3,7 +3,7 @@ use crate::ops::secret::{parse_delete_output, parse_list_output, parse_set_outpu
 use crate::ops::{SecretDeleteBuilder, SecretListBuilder, SecretSetBuilder};
 use crate::types::SecretInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> SecretSetBuilder<'a> {
     pub fn run(self) -> Result<(), SecretError> {
         let name = self.name().to_string();
@@ -14,7 +14,7 @@ impl<'a> SecretSetBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> SecretListBuilder<'a> {
     pub fn run(self) -> Result<Vec<SecretInfo>, SecretError> {
         let slug = self.repo_slug();
@@ -24,7 +24,7 @@ impl<'a> SecretListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> SecretDeleteBuilder<'a> {
     pub fn run(self) -> Result<(), SecretError> {
         let name = self.name().to_string();

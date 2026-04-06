@@ -3,7 +3,7 @@
 //! Each test section shows sync and async versions side-by-side.
 //! The only difference is:
 //!   - sync:  fluent_git::sync::git::*  / .run()
-//!   - async: fluent_git::git::*        / .run().await
+//!   - async: fluent_git::git::*        / .run_async().await
 //!
 //! Errors and result types are shared — they come from:
 //!   - fluent_git::error::*
@@ -41,8 +41,8 @@ mod tests {
     /// Async version of configure_test_identity.
     #[cfg(feature = "tokio")]
     async fn configure_test_identity_async(repo: &Repo) {
-        repo.config().set("user.name", "Test").run().await.unwrap();
-        repo.config().set("user.email", "test@test.com").run().await.unwrap();
+        repo.config().set("user.name", "Test").run_async().await.unwrap();
+        repo.config().set("user.email", "test@test.com").run_async().await.unwrap();
     }
 
     // ══════════════════════════════════════════════════════════════════════
@@ -82,7 +82,7 @@ mod tests {
     // Setup: Init
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_init_creates_repo() {
         let dir = get_temp_dir("sync_init_creates");
@@ -93,7 +93,7 @@ mod tests {
         assert!(!result.bare);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_init_creates_repo() {
         let dir = get_temp_dir("async_init_creates");
@@ -104,7 +104,7 @@ mod tests {
         assert!(!result.bare);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_init_bare() {
         let dir = get_temp_dir("sync_init_bare");
@@ -113,7 +113,7 @@ mod tests {
         assert!(result.bare);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_init_bare() {
         let dir = get_temp_dir("async_init_bare");
@@ -122,7 +122,7 @@ mod tests {
         assert!(result.bare);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_init_with_initial_branch() {
         let dir = get_temp_dir("sync_init_branch");
@@ -130,7 +130,7 @@ mod tests {
         assert_eq!(result.branch, "main");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_init_with_initial_branch() {
         let dir = get_temp_dir("async_init_branch");
@@ -138,7 +138,7 @@ mod tests {
         assert_eq!(result.branch, "main");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_init_into_repo() {
         let dir = get_temp_dir("sync_init_into_repo");
@@ -146,7 +146,7 @@ mod tests {
         assert_eq!(repo.path(), dir.as_path());
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_init_into_repo() {
         let dir = get_temp_dir("async_init_into_repo");
@@ -171,7 +171,7 @@ mod tests {
     // Setup: Open
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_open_existing_repo() {
         let dir = get_temp_dir("sync_open_existing");
@@ -180,7 +180,7 @@ mod tests {
         assert_eq!(repo.unwrap().path(), dir.as_path());
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_open_existing_repo() {
         let dir = get_temp_dir("async_open_existing");
@@ -189,7 +189,7 @@ mod tests {
         assert_eq!(repo.unwrap().path(), dir.as_path());
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_open_nonexistent_fails() {
         let dir = get_temp_dir("sync_open_noexist");
@@ -198,7 +198,7 @@ mod tests {
         assert!(matches!(err, OpenError::NotAccessible { .. }));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_open_nonexistent_fails() {
         let dir = get_temp_dir("async_open_noexist");
@@ -211,7 +211,7 @@ mod tests {
     // Setup: Clone
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_clone_local_repo() {
         let origin = get_temp_dir("sync_clone_origin");
@@ -223,7 +223,7 @@ mod tests {
         assert!(!result.shallow);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_clone_local_repo() {
         let origin = get_temp_dir("async_clone_origin");
@@ -235,7 +235,7 @@ mod tests {
         assert!(!result.shallow);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_clone_with_depth() {
         let origin = get_temp_dir("sync_clone_depth_origin");
@@ -245,7 +245,7 @@ mod tests {
         assert!(result.shallow);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_clone_with_depth() {
         let origin = get_temp_dir("async_clone_depth_origin");
@@ -255,7 +255,7 @@ mod tests {
         assert!(result.shallow);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_clone_specific_branch() {
         let origin = get_temp_dir("sync_clone_branch_origin");
@@ -269,21 +269,21 @@ mod tests {
         assert_eq!(result.branch, "main");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_clone_specific_branch() {
         let origin = get_temp_dir("async_clone_branch_origin");
         let origin_repo = fluent_git::git::init(&origin).initial_branch("main").run().await.unwrap().into_repo();
         configure_test_identity_async(&origin_repo).await;
         fs::write(origin.join("dummy.txt"), "x").unwrap();
-        origin_repo.add().all().run().await.unwrap();
-        origin_repo.commit().message("init").run().await.unwrap();
+        origin_repo.add().all().run_async().await.unwrap();
+        origin_repo.commit().message("init").run_async().await.unwrap();
         let dest = get_temp_dir("async_clone_branch_dest");
         let result = fluent_git::git::clone(&origin).branch("main").into(&dest).run().await.unwrap();
         assert_eq!(result.branch, "main");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_clone_with_remote_name() {
         let origin = get_temp_dir("sync_clone_remote_origin");
@@ -293,7 +293,7 @@ mod tests {
         assert_eq!(result.remote, "upstream");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_clone_with_remote_name() {
         let origin = get_temp_dir("async_clone_remote_origin");
@@ -303,7 +303,7 @@ mod tests {
         assert_eq!(result.remote, "upstream");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_clone_into_repo() {
         let origin = get_temp_dir("sync_clone_into_repo_origin");
@@ -313,7 +313,7 @@ mod tests {
         assert_eq!(repo.path(), dest.as_path());
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_clone_into_repo() {
         let origin = get_temp_dir("async_clone_into_repo_origin");
@@ -323,7 +323,7 @@ mod tests {
         assert_eq!(repo.path(), dest.as_path());
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_clone_with_mutate() {
         let origin = get_temp_dir("sync_clone_mutate_origin");
@@ -337,7 +337,7 @@ mod tests {
         clone.finish().run().unwrap();
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_clone_with_mutate() {
         let origin = get_temp_dir("async_clone_mutate_origin");
@@ -355,7 +355,7 @@ mod tests {
     // Repo: Add
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_add_single_file() {
         let dir = get_temp_dir("sync_add_single");
@@ -365,17 +365,17 @@ mod tests {
         assert_eq!(result.unwrap().files.len(), 1);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_add_single_file() {
         let dir = get_temp_dir("async_add_single");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         fs::write(dir.join("hello.txt"), "hello").unwrap();
-        let result: Result<AddResult, AddError> = repo.add().path("hello.txt").run().await;
+        let result: Result<AddResult, AddError> = repo.add().path("hello.txt").run_async().await;
         assert_eq!(result.unwrap().files.len(), 1);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_add_multiple_files() {
         let dir = get_temp_dir("sync_add_multi");
@@ -386,18 +386,18 @@ mod tests {
         assert_eq!(result.files.len(), 2);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_add_multiple_files() {
         let dir = get_temp_dir("async_add_multi");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         fs::write(dir.join("a.txt"), "a").unwrap();
         fs::write(dir.join("b.txt"), "b").unwrap();
-        let result = repo.add().path("a.txt").path("b.txt").run().await.unwrap();
+        let result = repo.add().path("a.txt").path("b.txt").run_async().await.unwrap();
         assert_eq!(result.files.len(), 2);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_add_all() {
         let dir = get_temp_dir("sync_add_all");
@@ -406,20 +406,20 @@ mod tests {
         repo.add().all().run().unwrap();
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_add_all() {
         let dir = get_temp_dir("async_add_all");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         fs::write(dir.join("a.txt"), "a").unwrap();
-        repo.add().all().run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
     }
 
     // ══════════════════════════════════════════════════════════════════════
     // Repo: Commit
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_commit_with_message() {
         let dir = get_temp_dir("sync_commit_msg");
@@ -434,22 +434,22 @@ mod tests {
         assert_eq!(result.message, "initial");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_commit_with_message() {
         let dir = get_temp_dir("async_commit_msg");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        let result: Result<CommitResult, CommitError> = repo.commit().message("initial").run().await;
+        repo.add().all().run_async().await.unwrap();
+        let result: Result<CommitResult, CommitError> = repo.commit().message("initial").run_async().await;
         let result = result.unwrap();
         assert_eq!(result.sha.len(), 40);
         assert_eq!(result.short_sha.len(), 7);
         assert_eq!(result.message, "initial");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_commit_with_author() {
         let dir = get_temp_dir("sync_commit_author");
@@ -461,19 +461,19 @@ mod tests {
         assert_eq!(result.author.name, "Test");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_commit_with_author() {
         let dir = get_temp_dir("async_commit_author");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        let result = repo.commit().message("init").author("Test", "t@t.com").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        let result = repo.commit().message("init").author("Test", "t@t.com").run_async().await.unwrap();
         assert_eq!(result.author.name, "Test");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_commit_allow_empty() {
         let dir = get_temp_dir("sync_commit_empty");
@@ -483,17 +483,17 @@ mod tests {
         assert_eq!(result.files_changed, 0);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_commit_allow_empty() {
         let dir = get_temp_dir("async_commit_empty");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
-        let result = repo.commit().message("empty").allow_empty().run().await.unwrap();
+        let result = repo.commit().message("empty").allow_empty().run_async().await.unwrap();
         assert_eq!(result.files_changed, 0);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_commit_amend() {
         let dir = get_temp_dir("sync_commit_amend");
@@ -506,20 +506,20 @@ mod tests {
         assert_eq!(result.message, "amended");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_commit_amend() {
         let dir = get_temp_dir("async_commit_amend");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("initial").run().await.unwrap();
-        let result = repo.commit().amend().message("amended").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("initial").run_async().await.unwrap();
+        let result = repo.commit().amend().message("amended").run_async().await.unwrap();
         assert_eq!(result.message, "amended");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_commit_nothing_staged_fails() {
         let dir = get_temp_dir("sync_commit_no_staged");
@@ -529,17 +529,17 @@ mod tests {
         assert!(matches!(err, CommitError::NothingToCommit));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_commit_nothing_staged_fails() {
         let dir = get_temp_dir("async_commit_no_staged");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
-        let err: CommitError = repo.commit().message("nothing").run().await.unwrap_err();
+        let err: CommitError = repo.commit().message("nothing").run_async().await.unwrap_err();
         assert!(matches!(err, CommitError::NothingToCommit));
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_commit_with_closure() {
         let dir = get_temp_dir("sync_commit_with");
@@ -559,14 +559,14 @@ mod tests {
             .unwrap();
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_commit_with_closure() {
         let dir = get_temp_dir("async_commit_with");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
         let no_verify = true;
         repo.commit()
             .message("fast")
@@ -575,7 +575,7 @@ mod tests {
                     c.no_verify();
                 }
             })
-            .run()
+            .run_async()
             .await
             .unwrap();
     }
@@ -584,7 +584,7 @@ mod tests {
     // Repo: Branch
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_branch_create_list_delete_rename() {
         let dir = get_temp_dir("sync_branch_lifecycle");
@@ -609,32 +609,32 @@ mod tests {
         assert_eq!(current.unwrap(), "main");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_branch_create_list_delete_rename() {
         let dir = get_temp_dir("async_branch_lifecycle");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
 
-        repo.branch().create("feature").run().await.unwrap();
-        repo.branch().create("to-rename").run().await.unwrap();
+        repo.branch().create("feature").run_async().await.unwrap();
+        repo.branch().create("to-rename").run_async().await.unwrap();
 
-        let branches: Result<Vec<BranchInfo>, BranchError> = repo.branch().list().run().await;
+        let branches: Result<Vec<BranchInfo>, BranchError> = repo.branch().list().run_async().await;
         let branches = branches.unwrap();
         assert!(branches.len() >= 3);
         assert_eq!(branches.iter().find(|b| b.is_current).unwrap().name, "main");
 
-        repo.branch().rename("to-rename", "renamed").run().await.unwrap();
-        repo.branch().delete("feature").run().await.unwrap();
+        repo.branch().rename("to-rename", "renamed").run_async().await.unwrap();
+        repo.branch().delete("feature").run_async().await.unwrap();
 
-        let current: Result<String, BranchError> = repo.branch().current().await;
+        let current: Result<String, BranchError> = repo.branch().current_async().await;
         assert_eq!(current.unwrap(), "main");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_branch_duplicate_fails() {
         let dir = get_temp_dir("sync_dup_branch");
@@ -647,20 +647,20 @@ mod tests {
         assert!(matches!(repo.branch().create("x").run().unwrap_err(), BranchError::AlreadyExists { .. }));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_branch_duplicate_fails() {
         let dir = get_temp_dir("async_dup_branch");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        repo.branch().create("x").run().await.unwrap();
-        assert!(matches!(repo.branch().create("x").run().await.unwrap_err(), BranchError::AlreadyExists { .. }));
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        repo.branch().create("x").run_async().await.unwrap();
+        assert!(matches!(repo.branch().create("x").run_async().await.unwrap_err(), BranchError::AlreadyExists { .. }));
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_delete_current_branch_fails() {
         let dir = get_temp_dir("sync_del_current");
@@ -672,23 +672,26 @@ mod tests {
         assert!(matches!(repo.branch().delete("main").run().unwrap_err(), BranchError::DeleteCurrent { .. }));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_delete_current_branch_fails() {
         let dir = get_temp_dir("async_del_current");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        assert!(matches!(repo.branch().delete("main").run().await.unwrap_err(), BranchError::DeleteCurrent { .. }));
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        assert!(matches!(
+            repo.branch().delete("main").run_async().await.unwrap_err(),
+            BranchError::DeleteCurrent { .. }
+        ));
     }
 
     // ══════════════════════════════════════════════════════════════════════
     // Repo: Checkout
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_checkout_branch_and_new_branch() {
         let dir = get_temp_dir("sync_checkout");
@@ -705,24 +708,24 @@ mod tests {
         assert_eq!(repo.branch().current().unwrap(), "feature2");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_checkout_branch_and_new_branch() {
         let dir = get_temp_dir("async_checkout");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        repo.branch().create("feature").run().await.unwrap();
-        let result: Result<(), CheckoutError> = repo.checkout().branch("feature").run().await;
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        repo.branch().create("feature").run_async().await.unwrap();
+        let result: Result<(), CheckoutError> = repo.checkout().branch("feature").run_async().await;
         result.unwrap();
-        assert_eq!(repo.branch().current().await.unwrap(), "feature");
-        repo.checkout().new_branch("feature2").run().await.unwrap();
-        assert_eq!(repo.branch().current().await.unwrap(), "feature2");
+        assert_eq!(repo.branch().current_async().await.unwrap(), "feature");
+        repo.checkout().new_branch("feature2").run_async().await.unwrap();
+        assert_eq!(repo.branch().current_async().await.unwrap(), "feature2");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_checkout_nonexistent_fails() {
         let dir = get_temp_dir("sync_checkout_noexist");
@@ -734,23 +737,26 @@ mod tests {
         assert!(matches!(repo.checkout().branch("nope").run().unwrap_err(), CheckoutError::RefNotFound { .. }));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_checkout_nonexistent_fails() {
         let dir = get_temp_dir("async_checkout_noexist");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        assert!(matches!(repo.checkout().branch("nope").run().await.unwrap_err(), CheckoutError::RefNotFound { .. }));
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        assert!(matches!(
+            repo.checkout().branch("nope").run_async().await.unwrap_err(),
+            CheckoutError::RefNotFound { .. }
+        ));
     }
 
     // ══════════════════════════════════════════════════════════════════════
     // Repo: Status
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_status() {
         let dir = get_temp_dir("sync_status");
@@ -770,26 +776,26 @@ mod tests {
         assert!(repo.status().run().unwrap().untracked.contains(&"new.txt".into()));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_status() {
         let dir = get_temp_dir("async_status");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        let status: Result<StatusResult, StatusError> = repo.status().run().await;
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        let status: Result<StatusResult, StatusError> = repo.status().run_async().await;
         assert!(status.unwrap().is_clean());
 
         fs::write(dir.join("h.txt"), "modified").unwrap();
-        assert!(!repo.status().run().await.unwrap().is_clean());
+        assert!(!repo.status().run_async().await.unwrap().is_clean());
 
         fs::write(dir.join("new.txt"), "new").unwrap();
-        assert!(repo.status().run().await.unwrap().untracked.contains(&"new.txt".into()));
+        assert!(repo.status().run_async().await.unwrap().untracked.contains(&"new.txt".into()));
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_status_short() {
         let dir = get_temp_dir("sync_status_short");
@@ -798,20 +804,20 @@ mod tests {
         assert!(!repo.status().short().run().unwrap().is_clean());
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_status_short() {
         let dir = get_temp_dir("async_status_short");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         fs::write(dir.join("h.txt"), "h").unwrap();
-        assert!(!repo.status().short().run().await.unwrap().is_clean());
+        assert!(!repo.status().short().run_async().await.unwrap().is_clean());
     }
 
     // ══════════════════════════════════════════════════════════════════════
     // Repo: Log
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_log() {
         let dir = get_temp_dir("sync_log");
@@ -829,25 +835,25 @@ mod tests {
         assert_eq!(commits[0].message, "second");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_log() {
         let dir = get_temp_dir("async_log");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("a.txt"), "a").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("first").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("first").run_async().await.unwrap();
         fs::write(dir.join("b.txt"), "b").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("second").run().await.unwrap();
-        let commits: Result<Vec<LogEntry>, LogError> = repo.log().run().await;
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("second").run_async().await.unwrap();
+        let commits: Result<Vec<LogEntry>, LogError> = repo.log().run_async().await;
         let commits = commits.unwrap();
         assert_eq!(commits.len(), 2);
         assert_eq!(commits[0].message, "second");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_log_with_limit() {
         let dir = get_temp_dir("sync_log_limit");
@@ -861,7 +867,7 @@ mod tests {
         assert_eq!(repo.log().max_count(2).run().unwrap().len(), 2);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_log_with_limit() {
         let dir = get_temp_dir("async_log_limit");
@@ -869,13 +875,13 @@ mod tests {
         configure_test_identity_async(&repo).await;
         for i in 0..5 {
             fs::write(dir.join(format!("{i}.txt")), format!("{i}")).unwrap();
-            repo.add().all().run().await.unwrap();
-            repo.commit().message(&format!("commit {i}")).run().await.unwrap();
+            repo.add().all().run_async().await.unwrap();
+            repo.commit().message(&format!("commit {i}")).run_async().await.unwrap();
         }
-        assert_eq!(repo.log().max_count(2).run().await.unwrap().len(), 2);
+        assert_eq!(repo.log().max_count(2).run_async().await.unwrap().len(), 2);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_log_on_empty_repo_fails() {
         let dir = get_temp_dir("sync_log_empty");
@@ -883,19 +889,19 @@ mod tests {
         assert!(matches!(repo.log().run().unwrap_err(), LogError::NoCommits));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_log_on_empty_repo_fails() {
         let dir = get_temp_dir("async_log_empty");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
-        assert!(matches!(repo.log().run().await.unwrap_err(), LogError::NoCommits));
+        assert!(matches!(repo.log().run_async().await.unwrap_err(), LogError::NoCommits));
     }
 
     // ══════════════════════════════════════════════════════════════════════
     // Repo: Diff
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_diff() {
         let dir = get_temp_dir("sync_diff");
@@ -909,21 +915,21 @@ mod tests {
         assert!(!diff.unwrap().is_empty());
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_diff() {
         let dir = get_temp_dir("async_diff");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
         fs::write(dir.join("h.txt"), "mod").unwrap();
-        let diff: Result<DiffResult, DiffError> = repo.diff().run().await;
+        let diff: Result<DiffResult, DiffError> = repo.diff().run_async().await;
         assert!(!diff.unwrap().is_empty());
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_diff_cached() {
         let dir = get_temp_dir("sync_diff_cached");
@@ -937,21 +943,21 @@ mod tests {
         assert_eq!(repo.diff().cached().run().unwrap().files[0].path, "h.txt");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_diff_cached() {
         let dir = get_temp_dir("async_diff_cached");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
         fs::write(dir.join("h.txt"), "mod").unwrap();
-        repo.add().all().run().await.unwrap();
-        assert_eq!(repo.diff().cached().run().await.unwrap().files[0].path, "h.txt");
+        repo.add().all().run_async().await.unwrap();
+        assert_eq!(repo.diff().cached().run_async().await.unwrap().files[0].path, "h.txt");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_diff_between_refs() {
         let dir = get_temp_dir("sync_diff_refs");
@@ -967,23 +973,23 @@ mod tests {
         assert!(!repo.diff().between("main", "feature").run().unwrap().is_empty());
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_diff_between_refs() {
         let dir = get_temp_dir("async_diff_refs");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("first").run().await.unwrap();
-        repo.checkout().new_branch("feature").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("first").run_async().await.unwrap();
+        repo.checkout().new_branch("feature").run_async().await.unwrap();
         fs::write(dir.join("h.txt"), "changed").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("second").run().await.unwrap();
-        assert!(!repo.diff().between("main", "feature").run().await.unwrap().is_empty());
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("second").run_async().await.unwrap();
+        assert!(!repo.diff().between("main", "feature").run_async().await.unwrap().is_empty());
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_diff_bad_ref_fails() {
         let dir = get_temp_dir("sync_diff_bad_ref");
@@ -995,23 +1001,26 @@ mod tests {
         assert!(matches!(repo.diff().between("nope", "HEAD").run().unwrap_err(), DiffError::RefNotFound { .. }));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_diff_bad_ref_fails() {
         let dir = get_temp_dir("async_diff_bad_ref");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("a.txt"), "a").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        assert!(matches!(repo.diff().between("nope", "HEAD").run().await.unwrap_err(), DiffError::RefNotFound { .. }));
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        assert!(matches!(
+            repo.diff().between("nope", "HEAD").run_async().await.unwrap_err(),
+            DiffError::RefNotFound { .. }
+        ));
     }
 
     // ══════════════════════════════════════════════════════════════════════
     // Repo: Stash
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_stash_push_and_pop() {
         let dir = get_temp_dir("sync_stash");
@@ -1027,23 +1036,23 @@ mod tests {
         assert_eq!(fs::read_to_string(dir.join("h.txt")).unwrap(), "mod");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_stash_push_and_pop() {
         let dir = get_temp_dir("async_stash");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
         fs::write(dir.join("h.txt"), "mod").unwrap();
-        repo.stash().push().run().await.unwrap();
+        repo.stash().push().run_async().await.unwrap();
         assert_eq!(fs::read_to_string(dir.join("h.txt")).unwrap(), "h");
-        repo.stash().pop().run().await.unwrap();
+        repo.stash().pop().run_async().await.unwrap();
         assert_eq!(fs::read_to_string(dir.join("h.txt")).unwrap(), "mod");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_stash_list() {
         let dir = get_temp_dir("sync_stash_list");
@@ -1060,24 +1069,24 @@ mod tests {
         assert_eq!(stashes.unwrap().len(), 2);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_stash_list() {
         let dir = get_temp_dir("async_stash_list");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
         fs::write(dir.join("h.txt"), "c1").unwrap();
-        repo.stash().push().message("first").run().await.unwrap();
+        repo.stash().push().message("first").run_async().await.unwrap();
         fs::write(dir.join("h.txt"), "c2").unwrap();
-        repo.stash().push().message("second").run().await.unwrap();
-        let stashes: Result<Vec<StashEntry>, StashError> = repo.stash().list().run().await;
+        repo.stash().push().message("second").run_async().await.unwrap();
+        let stashes: Result<Vec<StashEntry>, StashError> = repo.stash().list().run_async().await;
         assert_eq!(stashes.unwrap().len(), 2);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_stash_on_clean_fails() {
         let dir = get_temp_dir("sync_stash_clean");
@@ -1089,23 +1098,23 @@ mod tests {
         assert!(matches!(repo.stash().push().run().unwrap_err(), StashError::NothingToStash));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_stash_on_clean_fails() {
         let dir = get_temp_dir("async_stash_clean");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        assert!(matches!(repo.stash().push().run().await.unwrap_err(), StashError::NothingToStash));
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        assert!(matches!(repo.stash().push().run_async().await.unwrap_err(), StashError::NothingToStash));
     }
 
     // ══════════════════════════════════════════════════════════════════════
     // Repo: Remote, Tag, Reset, Merge, Rebase, Cherry-pick, Config, Clean, RevParse
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_remote_lifecycle() {
         let dir = get_temp_dir("sync_remote");
@@ -1120,22 +1129,22 @@ mod tests {
         assert!(matches!(repo.remote().remove("ghost").run().unwrap_err(), RemoteError::NotFound { .. }));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_remote_lifecycle() {
         let dir = get_temp_dir("async_remote");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
-        repo.remote().add("origin", "https://github.com/u/r.git").run().await.unwrap();
-        assert!(repo.remote().list().run().await.unwrap().iter().any(|r| r.name == "origin"));
+        repo.remote().add("origin", "https://github.com/u/r.git").run_async().await.unwrap();
+        assert!(repo.remote().list().run_async().await.unwrap().iter().any(|r| r.name == "origin"));
         assert!(matches!(
-            repo.remote().add("origin", "https://b.com").run().await.unwrap_err(),
+            repo.remote().add("origin", "https://b.com").run_async().await.unwrap_err(),
             RemoteError::AlreadyExists { .. }
         ));
-        repo.remote().remove("origin").run().await.unwrap();
-        assert!(matches!(repo.remote().remove("ghost").run().await.unwrap_err(), RemoteError::NotFound { .. }));
+        repo.remote().remove("origin").run_async().await.unwrap();
+        assert!(matches!(repo.remote().remove("ghost").run_async().await.unwrap_err(), RemoteError::NotFound { .. }));
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_tag_lifecycle() {
         let dir = get_temp_dir("sync_tag");
@@ -1154,26 +1163,26 @@ mod tests {
         assert!(matches!(repo.tag().delete("v99").run().unwrap_err(), TagError::NotFound { .. }));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_tag_lifecycle() {
         let dir = get_temp_dir("async_tag");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        repo.tag().create("v0.1.0").run().await.unwrap();
-        repo.tag().create("v0.2.0").message("annotated").run().await.unwrap();
-        let tags = repo.tag().list().run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        repo.tag().create("v0.1.0").run_async().await.unwrap();
+        repo.tag().create("v0.2.0").message("annotated").run_async().await.unwrap();
+        let tags = repo.tag().list().run_async().await.unwrap();
         assert!(tags.iter().any(|t| t.name == "v0.1.0" && !t.annotated));
         assert!(tags.iter().any(|t| t.name == "v0.2.0" && t.annotated));
-        assert!(matches!(repo.tag().create("v0.1.0").run().await.unwrap_err(), TagError::AlreadyExists { .. }));
-        repo.tag().delete("v0.1.0").run().await.unwrap();
-        assert!(matches!(repo.tag().delete("v99").run().await.unwrap_err(), TagError::NotFound { .. }));
+        assert!(matches!(repo.tag().create("v0.1.0").run_async().await.unwrap_err(), TagError::AlreadyExists { .. }));
+        repo.tag().delete("v0.1.0").run_async().await.unwrap();
+        assert!(matches!(repo.tag().delete("v99").run_async().await.unwrap_err(), TagError::NotFound { .. }));
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_reset() {
         let dir = get_temp_dir("sync_reset");
@@ -1189,23 +1198,23 @@ mod tests {
         assert_eq!(r.mode, ResetMode::Soft);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_reset() {
         let dir = get_temp_dir("async_reset");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("a.txt"), "a").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("first").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("first").run_async().await.unwrap();
         fs::write(dir.join("b.txt"), "b").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("second").run().await.unwrap();
-        let r = repo.reset().soft().to("HEAD~1").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("second").run_async().await.unwrap();
+        let r = repo.reset().soft().to("HEAD~1").run_async().await.unwrap();
         assert_eq!(r.mode, ResetMode::Soft);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_merge_no_ff() {
         let dir = get_temp_dir("sync_merge");
@@ -1223,25 +1232,25 @@ mod tests {
         assert!(!result.fast_forward);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_merge_no_ff() {
         let dir = get_temp_dir("async_merge");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        repo.checkout().new_branch("feature").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        repo.checkout().new_branch("feature").run_async().await.unwrap();
         fs::write(dir.join("f.txt"), "f").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("feature").run().await.unwrap();
-        repo.checkout().branch("main").run().await.unwrap();
-        let result = repo.merge().branch("feature").no_ff().run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("feature").run_async().await.unwrap();
+        repo.checkout().branch("main").run_async().await.unwrap();
+        let result = repo.merge().branch("feature").no_ff().run_async().await.unwrap();
         assert!(!result.fast_forward);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_merge_conflict() {
         let dir = get_temp_dir("sync_merge_conflict");
@@ -1263,29 +1272,29 @@ mod tests {
         assert!(matches!(err, MergeError::Conflict { .. }));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_merge_conflict() {
         let dir = get_temp_dir("async_merge_conflict");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
-        repo.config().set("user.name", "T").run().await.unwrap();
-        repo.config().set("user.email", "t@t").run().await.unwrap();
+        repo.config().set("user.name", "T").run_async().await.unwrap();
+        repo.config().set("user.email", "t@t").run_async().await.unwrap();
         fs::write(dir.join("f.txt"), "original").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        repo.checkout().new_branch("a").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        repo.checkout().new_branch("a").run_async().await.unwrap();
         fs::write(dir.join("f.txt"), "from a").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("a").run().await.unwrap();
-        repo.checkout().branch("main").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("a").run_async().await.unwrap();
+        repo.checkout().branch("main").run_async().await.unwrap();
         fs::write(dir.join("f.txt"), "from main").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("main").run().await.unwrap();
-        let err: MergeError = repo.merge().branch("a").run().await.unwrap_err();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("main").run_async().await.unwrap();
+        let err: MergeError = repo.merge().branch("a").run_async().await.unwrap_err();
         assert!(matches!(err, MergeError::Conflict { .. }));
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_cherry_pick() {
         let dir = get_temp_dir("sync_cherry_pick");
@@ -1304,26 +1313,26 @@ mod tests {
         assert!(dir.join("f.txt").exists());
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_cherry_pick() {
         let dir = get_temp_dir("async_cherry_pick");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        repo.checkout().new_branch("feature").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        repo.checkout().new_branch("feature").run_async().await.unwrap();
         fs::write(dir.join("f.txt"), "cherry").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("cherry this").run().await.unwrap();
-        let sha = &repo.log().max_count(1).run().await.unwrap()[0].sha;
-        repo.checkout().branch("main").run().await.unwrap();
-        repo.cherry_pick().commit(sha).run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("cherry this").run_async().await.unwrap();
+        let sha = &repo.log().max_count(1).run_async().await.unwrap()[0].sha;
+        repo.checkout().branch("main").run_async().await.unwrap();
+        repo.cherry_pick().commit(sha).run_async().await.unwrap();
         assert!(dir.join("f.txt").exists());
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_config_set_get_unset() {
         let dir = get_temp_dir("sync_config");
@@ -1334,18 +1343,21 @@ mod tests {
         assert!(matches!(repo.config().get("user.name").run().unwrap_err(), ConfigError::KeyNotFound { .. }));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_config_set_get_unset() {
         let dir = get_temp_dir("async_config");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
-        repo.config().set("user.name", "Test").run().await.unwrap();
-        assert_eq!(repo.config().get("user.name").run().await.unwrap(), "Test");
-        repo.config().unset("user.name").run().await.unwrap();
-        assert!(matches!(repo.config().get("user.name").run().await.unwrap_err(), ConfigError::KeyNotFound { .. }));
+        repo.config().set("user.name", "Test").run_async().await.unwrap();
+        assert_eq!(repo.config().get("user.name").run_async().await.unwrap(), "Test");
+        repo.config().unset("user.name").run_async().await.unwrap();
+        assert!(matches!(
+            repo.config().get("user.name").run_async().await.unwrap_err(),
+            ConfigError::KeyNotFound { .. }
+        ));
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_clean() {
         let dir = get_temp_dir("sync_clean");
@@ -1360,22 +1372,22 @@ mod tests {
         assert!(!dir.join("junk.txt").exists());
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_clean() {
         let dir = get_temp_dir("async_clean");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("junk.txt"), "j").unwrap();
-        assert!(matches!(repo.clean().run().await.unwrap_err(), CleanError::ForceRequired));
+        assert!(matches!(repo.clean().run_async().await.unwrap_err(), CleanError::ForceRequired));
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().path("h.txt").run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        let _result = repo.clean().force().directories().run().await.unwrap();
+        repo.add().path("h.txt").run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        let _result = repo.clean().force().directories().run_async().await.unwrap();
         assert!(!dir.join("junk.txt").exists());
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_rev_parse() {
         let dir = get_temp_dir("sync_rev_parse");
@@ -1389,25 +1401,28 @@ mod tests {
         assert!(matches!(repo.rev_parse("nonexistent").run().unwrap_err(), RevParseError::RefNotFound { .. }));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_rev_parse() {
         let dir = get_temp_dir("async_rev_parse");
         let repo = fluent_git::git::init(&dir).run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
-        let sha: Result<String, RevParseError> = repo.rev_parse("HEAD").run().await;
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
+        let sha: Result<String, RevParseError> = repo.rev_parse("HEAD").run_async().await;
         assert_eq!(sha.unwrap().len(), 40);
-        assert!(matches!(repo.rev_parse("nonexistent").run().await.unwrap_err(), RevParseError::RefNotFound { .. }));
+        assert!(matches!(
+            repo.rev_parse("nonexistent").run_async().await.unwrap_err(),
+            RevParseError::RefNotFound { .. }
+        ));
     }
 
     // ══════════════════════════════════════════════════════════════════════
     // Repo: Worktree
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_worktree_lifecycle() {
         let dir = get_temp_dir("sync_wt");
@@ -1461,68 +1476,68 @@ mod tests {
         assert!(repo.worktree().prune().run().unwrap().pruned.is_empty());
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_worktree_lifecycle() {
         let dir = get_temp_dir("async_wt");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
         configure_test_identity_async(&repo).await;
         fs::write(dir.join("h.txt"), "h").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("init").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("init").run_async().await.unwrap();
 
         // Add — canonicalize paths since git returns canonical paths
         let wt_a = std::fs::canonicalize(get_temp_dir("async_wt_a")).unwrap();
         let wt_b = std::fs::canonicalize(get_temp_dir("async_wt_b")).unwrap();
-        let result = repo.worktree().add(&wt_a, "feature-a").run().await.unwrap();
+        let result = repo.worktree().add(&wt_a, "feature-a").run_async().await.unwrap();
         assert!(result.created_branch);
-        repo.worktree().add(&wt_b, "feature-b").run().await.unwrap();
+        repo.worktree().add(&wt_b, "feature-b").run_async().await.unwrap();
 
         // Branch in use
         let wt_dup = get_temp_dir("async_wt_dup");
         assert!(matches!(
-            repo.worktree().add(&wt_dup, "main").run().await.unwrap_err(),
+            repo.worktree().add(&wt_dup, "main").run_async().await.unwrap_err(),
             WorktreeError::BranchInUse { .. }
         ));
 
         // List & find
-        let list = repo.worktree().list().run().await.unwrap();
+        let list = repo.worktree().list().run_async().await.unwrap();
         assert!(list.main.is_main);
         assert_eq!(list.linked().len(), 2);
         assert_eq!(list.find_by_branch("feature-a").unwrap().path, wt_a);
         assert_eq!(list.find_by_path(&wt_b).unwrap().branch, "feature-b");
 
         // Lock & unlock
-        let lock = repo.worktree().lock(&wt_b).reason("external drive").run().await.unwrap();
+        let lock = repo.worktree().lock(&wt_b).reason("external drive").run_async().await.unwrap();
         assert!(!lock.was_already_locked);
-        assert!(repo.worktree().list().run().await.unwrap().find_by_branch("feature-b").unwrap().locked);
-        repo.worktree().unlock(&wt_b).run().await.unwrap();
+        assert!(repo.worktree().list().run_async().await.unwrap().find_by_branch("feature-b").unwrap().locked);
+        repo.worktree().unlock(&wt_b).run_async().await.unwrap();
 
         // Move — target must not exist for git worktree move
         let wt_moved_parent = std::fs::canonicalize(get_temp_dir("async_wt_moved_parent")).unwrap();
         let wt_moved = wt_moved_parent.join("wt_dest");
-        let mv = repo.worktree().move_to(&wt_a, &wt_moved).run().await.unwrap();
+        let mv = repo.worktree().move_to(&wt_a, &wt_moved).run_async().await.unwrap();
         assert_eq!(mv.old_path, wt_a);
         assert_eq!(mv.new_path, wt_moved);
 
         // Remove
-        repo.worktree().remove(&wt_moved).run().await.unwrap();
-        repo.worktree().remove(&wt_b).run().await.unwrap();
-        assert_eq!(repo.worktree().list().run().await.unwrap().linked().len(), 0);
+        repo.worktree().remove(&wt_moved).run_async().await.unwrap();
+        repo.worktree().remove(&wt_b).run_async().await.unwrap();
+        assert_eq!(repo.worktree().list().run_async().await.unwrap().linked().len(), 0);
         assert!(matches!(
-            repo.worktree().remove(&PathBuf::from("/tmp/ghost")).run().await.unwrap_err(),
+            repo.worktree().remove(&PathBuf::from("/tmp/ghost")).run_async().await.unwrap_err(),
             WorktreeError::NotFound { .. }
         ));
 
         // Prune
-        assert!(repo.worktree().prune().run().await.unwrap().pruned.is_empty());
+        assert!(repo.worktree().prune().run_async().await.unwrap().pruned.is_empty());
     }
 
     // ══════════════════════════════════════════════════════════════════════
     // GitError: umbrella for ? propagation
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_question_mark_propagation() {
         fn workflow(repo: &Repo) -> Result<CommitResult, GitError> {
@@ -1543,18 +1558,18 @@ mod tests {
         assert_eq!(workflow(&repo).unwrap().message, "feature work");
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_question_mark_propagation() {
         async fn workflow(repo: &Repo) -> Result<CommitResult, GitError> {
             fs::write(repo.path().join("new.txt"), "data").unwrap();
-            repo.add().all().run().await?;
-            repo.commit().message("add").run().await?;
-            repo.branch().create("feature").run().await?;
-            repo.checkout().branch("feature").run().await?;
+            repo.add().all().run_async().await?;
+            repo.commit().message("add").run_async().await?;
+            repo.branch().create("feature").run_async().await?;
+            repo.checkout().branch("feature").run_async().await?;
             fs::write(repo.path().join("f.txt"), "feature").unwrap();
-            repo.add().all().run().await?;
-            let result = repo.commit().message("feature work").run().await?;
+            repo.add().all().run_async().await?;
+            let result = repo.commit().message("feature work").run_async().await?;
             Ok(result)
         }
 
@@ -1564,7 +1579,7 @@ mod tests {
         assert_eq!(workflow(&repo).await.unwrap().message, "feature work");
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn git_error_preserves_domain_info() {
         fn failing(repo: &Repo) -> Result<(), GitError> {
@@ -1585,7 +1600,7 @@ mod tests {
     // Full workflows
     // ══════════════════════════════════════════════════════════════════════
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_full_workflow_init_to_merge() {
         let dir = get_temp_dir("sync_full");
@@ -1609,31 +1624,31 @@ mod tests {
         assert!(repo.log().run().unwrap().len() >= 3);
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_full_workflow_init_to_merge() {
         let dir = get_temp_dir("async_full");
         let repo = fluent_git::git::init(&dir).initial_branch("main").run().await.unwrap().into_repo();
-        repo.config().set("user.name", "Test").run().await.unwrap();
-        repo.config().set("user.email", "t@t").run().await.unwrap();
+        repo.config().set("user.name", "Test").run_async().await.unwrap();
+        repo.config().set("user.email", "t@t").run_async().await.unwrap();
         fs::write(dir.join("README.md"), "# Project").unwrap();
-        repo.add().all().run().await.unwrap();
-        assert_eq!(repo.commit().message("initial").run().await.unwrap().branch, "main");
-        repo.checkout().new_branch("feature").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        assert_eq!(repo.commit().message("initial").run_async().await.unwrap().branch, "main");
+        repo.checkout().new_branch("feature").run_async().await.unwrap();
         fs::write(dir.join("feature.rs"), "fn f() {}").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("add feature").run().await.unwrap();
-        repo.tag().create("v0.1.0-beta").message("beta").run().await.unwrap();
-        repo.checkout().branch("main").run().await.unwrap();
-        assert!(!repo.merge().branch("feature").no_ff().run().await.unwrap().fast_forward);
-        repo.tag().create("v0.1.0").message("release").run().await.unwrap();
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("add feature").run_async().await.unwrap();
+        repo.tag().create("v0.1.0-beta").message("beta").run_async().await.unwrap();
+        repo.checkout().branch("main").run_async().await.unwrap();
+        assert!(!repo.merge().branch("feature").no_ff().run_async().await.unwrap().fast_forward);
+        repo.tag().create("v0.1.0").message("release").run_async().await.unwrap();
         assert!(dir.join("feature.rs").exists());
-        assert_eq!(repo.branch().current().await.unwrap(), "main");
-        assert!(repo.status().run().await.unwrap().is_clean());
-        assert!(repo.log().run().await.unwrap().len() >= 3);
+        assert_eq!(repo.branch().current_async().await.unwrap(), "main");
+        assert!(repo.status().run_async().await.unwrap().is_clean());
+        assert!(repo.log().run_async().await.unwrap().len() >= 3);
     }
 
-    #[cfg(all(feature = "blocking", not(feature = "tokio")))]
+    #[cfg(feature = "blocking")]
     #[test]
     fn sync_full_workflow_clone_then_operate() {
         let origin = get_temp_dir("sync_full_clone_origin");
@@ -1656,27 +1671,27 @@ mod tests {
         assert!(repo.remote().list().run().unwrap().iter().any(|r| r.name == "origin"));
     }
 
-    #[cfg(all(feature = "tokio", not(feature = "blocking")))]
+    #[cfg(feature = "tokio")]
     #[tokio::test]
     async fn async_full_workflow_clone_then_operate() {
         let origin = get_temp_dir("async_full_clone_origin");
         let origin_repo = fluent_git::git::init(&origin).initial_branch("main").run().await.unwrap().into_repo();
-        origin_repo.config().set("user.name", "O").run().await.unwrap();
-        origin_repo.config().set("user.email", "o@o").run().await.unwrap();
+        origin_repo.config().set("user.name", "O").run_async().await.unwrap();
+        origin_repo.config().set("user.email", "o@o").run_async().await.unwrap();
         fs::write(origin.join("README.md"), "# O").unwrap();
-        origin_repo.add().all().run().await.unwrap();
-        origin_repo.commit().message("init").run().await.unwrap();
+        origin_repo.add().all().run_async().await.unwrap();
+        origin_repo.commit().message("init").run_async().await.unwrap();
 
         let dest = get_temp_dir("async_full_clone_dest");
         let clone_result = fluent_git::git::clone(&origin).into(&dest).run().await.unwrap();
         assert_eq!(clone_result.remote, "origin");
         let repo = clone_result.into_repo();
-        repo.config().set("user.name", "C").run().await.unwrap();
-        repo.config().set("user.email", "c@c").run().await.unwrap();
+        repo.config().set("user.name", "C").run_async().await.unwrap();
+        repo.config().set("user.email", "c@c").run_async().await.unwrap();
         fs::write(dest.join("f.rs"), "fn f() {}").unwrap();
-        repo.add().all().run().await.unwrap();
-        repo.commit().message("feature").run().await.unwrap();
-        assert!(repo.remote().list().run().await.unwrap().iter().any(|r| r.name == "origin"));
+        repo.add().all().run_async().await.unwrap();
+        repo.commit().message("feature").run_async().await.unwrap();
+        assert!(repo.remote().list().run_async().await.unwrap().iter().any(|r| r.name == "origin"));
     }
 
     // ══════════════════════════════════════════════════════════════════════

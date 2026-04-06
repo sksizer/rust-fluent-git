@@ -2,7 +2,7 @@ use crate::error::RebaseError;
 use crate::ops::RebaseBuilder;
 use crate::ops::rebase::parse_rebase_output;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RebaseBuilder<'a> {
     pub fn run(self) -> Result<(), RebaseError> {
         let cmd = self.build_command();

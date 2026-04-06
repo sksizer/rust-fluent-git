@@ -3,7 +3,7 @@ use crate::ops::DiffBuilder;
 use crate::ops::diff::{build_diff_result, check_diff_errors, parse_numstat_output};
 use crate::types::DiffResult;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> DiffBuilder<'a> {
     pub fn run(self) -> Result<DiffResult, DiffError> {
         let numstat_cmd = self.build_numstat_command();

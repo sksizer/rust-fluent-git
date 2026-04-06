@@ -2,7 +2,7 @@ use crate::error::ConfigError;
 use crate::ops::config::{parse_config_get_output, parse_config_set_output, parse_config_unset_output};
 use crate::ops::{ConfigGetBuilder, ConfigSetBuilder, ConfigUnsetBuilder};
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> ConfigSetBuilder<'a> {
     pub fn run(self) -> Result<(), ConfigError> {
         let cmd = self.build_command();
@@ -11,7 +11,7 @@ impl<'a> ConfigSetBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> ConfigGetBuilder<'a> {
     pub fn run(self) -> Result<String, ConfigError> {
         let cmd = self.build_command();
@@ -20,7 +20,7 @@ impl<'a> ConfigGetBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> ConfigUnsetBuilder<'a> {
     pub fn run(self) -> Result<(), ConfigError> {
         let cmd = self.build_command();

@@ -7,9 +7,9 @@ use crate::ops::{
 };
 use crate::types::WorkflowInfo;
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorkflowListBuilder<'a> {
-    pub async fn run(self) -> Result<Vec<WorkflowInfo>, WorkflowError> {
+    pub async fn run_async(self) -> Result<Vec<WorkflowInfo>, WorkflowError> {
         let slug = self.repo_slug();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
@@ -17,9 +17,9 @@ impl<'a> WorkflowListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorkflowViewBuilder<'a> {
-    pub async fn run(self) -> Result<WorkflowInfo, WorkflowError> {
+    pub async fn run_async(self) -> Result<WorkflowInfo, WorkflowError> {
         let id = self.id().to_string();
         let slug = self.repo_slug();
         let cmd = self.build_command();
@@ -28,9 +28,9 @@ impl<'a> WorkflowViewBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorkflowRunBuilder<'a> {
-    pub async fn run(self) -> Result<(), WorkflowError> {
+    pub async fn run_async(self) -> Result<(), WorkflowError> {
         let id = self.id().to_string();
         let slug = self.repo_slug();
         let cmd = self.build_command();
@@ -39,9 +39,9 @@ impl<'a> WorkflowRunBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorkflowEnableBuilder<'a> {
-    pub async fn run(self) -> Result<(), WorkflowError> {
+    pub async fn run_async(self) -> Result<(), WorkflowError> {
         let id = self.id().to_string();
         let slug = self.repo_slug();
         let cmd = self.build_command();
@@ -50,9 +50,9 @@ impl<'a> WorkflowEnableBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorkflowDisableBuilder<'a> {
-    pub async fn run(self) -> Result<(), WorkflowError> {
+    pub async fn run_async(self) -> Result<(), WorkflowError> {
         let id = self.id().to_string();
         let slug = self.repo_slug();
         let cmd = self.build_command();

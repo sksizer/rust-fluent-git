@@ -6,7 +6,7 @@ use crate::ops::branch::{
 use crate::ops::{BranchBuilder, BranchCreateBuilder, BranchDeleteBuilder, BranchListBuilder, BranchRenameBuilder};
 use crate::types::BranchInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> BranchBuilder<'a> {
     /// Get the name of the current branch.
     pub fn current(&self) -> Result<String, BranchError> {
@@ -16,7 +16,7 @@ impl<'a> BranchBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> BranchCreateBuilder<'a> {
     pub fn run(self) -> Result<(), BranchError> {
         let cmd = self.build_command();
@@ -25,7 +25,7 @@ impl<'a> BranchCreateBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> BranchDeleteBuilder<'a> {
     pub fn run(self) -> Result<(), BranchError> {
         let cmd = self.build_command();
@@ -34,7 +34,7 @@ impl<'a> BranchDeleteBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> BranchListBuilder<'a> {
     pub fn run(self) -> Result<Vec<BranchInfo>, BranchError> {
         let cmd = self.build_command();
@@ -43,7 +43,7 @@ impl<'a> BranchListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> BranchRenameBuilder<'a> {
     pub fn run(self) -> Result<(), BranchError> {
         let cmd = self.build_command();

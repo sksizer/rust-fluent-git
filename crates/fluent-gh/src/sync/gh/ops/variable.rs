@@ -3,7 +3,7 @@ use crate::ops::variable::{parse_delete_output, parse_get_output, parse_list_out
 use crate::ops::{VariableDeleteBuilder, VariableGetBuilder, VariableListBuilder, VariableSetBuilder};
 use crate::types::VariableInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> VariableSetBuilder<'a> {
     pub fn run(self) -> Result<(), VariableError> {
         let name = self.name().to_string();
@@ -14,7 +14,7 @@ impl<'a> VariableSetBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> VariableListBuilder<'a> {
     pub fn run(self) -> Result<Vec<VariableInfo>, VariableError> {
         let slug = self.repo_slug();
@@ -24,7 +24,7 @@ impl<'a> VariableListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> VariableDeleteBuilder<'a> {
     pub fn run(self) -> Result<(), VariableError> {
         let name = self.name().to_string();
@@ -35,7 +35,7 @@ impl<'a> VariableDeleteBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> VariableGetBuilder<'a> {
     pub fn run(self) -> Result<VariableInfo, VariableError> {
         let name = self.name().to_string();

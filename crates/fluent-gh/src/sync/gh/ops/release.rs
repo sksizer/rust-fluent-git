@@ -3,7 +3,7 @@ use crate::ops::release::{parse_create_output, parse_delete_output, parse_list_o
 use crate::ops::{ReleaseCreateBuilder, ReleaseDeleteBuilder, ReleaseListBuilder, ReleaseViewBuilder};
 use crate::types::{ReleaseCreateResult, ReleaseInfo};
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> ReleaseCreateBuilder<'a> {
     pub fn run(self) -> Result<ReleaseCreateResult, ReleaseError> {
         let tag = self.tag().to_string();
@@ -14,7 +14,7 @@ impl<'a> ReleaseCreateBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> ReleaseListBuilder<'a> {
     pub fn run(self) -> Result<Vec<ReleaseInfo>, ReleaseError> {
         let slug = self.repo_slug();
@@ -24,7 +24,7 @@ impl<'a> ReleaseListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> ReleaseViewBuilder<'a> {
     pub fn run(self) -> Result<ReleaseInfo, ReleaseError> {
         let tag = self.tag().to_string();
@@ -35,7 +35,7 @@ impl<'a> ReleaseViewBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> ReleaseDeleteBuilder<'a> {
     pub fn run(self) -> Result<(), ReleaseError> {
         let tag = self.tag().to_string();

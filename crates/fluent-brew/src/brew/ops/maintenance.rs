@@ -4,36 +4,36 @@ use crate::ops::maintenance::{
     parse_doctor_output, parse_update_output,
 };
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl UpdateBuilder {
-    pub async fn run(self) -> Result<(), MaintenanceError> {
+    pub async fn run_async(self) -> Result<(), MaintenanceError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_update_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl CleanupBuilder {
-    pub async fn run(self) -> Result<(), MaintenanceError> {
+    pub async fn run_async(self) -> Result<(), MaintenanceError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_cleanup_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl AutoremoveBuilder {
-    pub async fn run(self) -> Result<(), MaintenanceError> {
+    pub async fn run_async(self) -> Result<(), MaintenanceError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_autoremove_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl DoctorBuilder {
-    pub async fn run(self) -> Result<String, MaintenanceError> {
+    pub async fn run_async(self) -> Result<String, MaintenanceError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_doctor_output(&output)

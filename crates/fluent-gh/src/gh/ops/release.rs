@@ -3,9 +3,9 @@ use crate::ops::release::{parse_create_output, parse_delete_output, parse_list_o
 use crate::ops::{ReleaseCreateBuilder, ReleaseDeleteBuilder, ReleaseListBuilder, ReleaseViewBuilder};
 use crate::types::{ReleaseCreateResult, ReleaseInfo};
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> ReleaseCreateBuilder<'a> {
-    pub async fn run(self) -> Result<ReleaseCreateResult, ReleaseError> {
+    pub async fn run_async(self) -> Result<ReleaseCreateResult, ReleaseError> {
         let tag = self.tag().to_string();
         let slug = self.repo_slug();
         let cmd = self.build_command();
@@ -14,9 +14,9 @@ impl<'a> ReleaseCreateBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> ReleaseListBuilder<'a> {
-    pub async fn run(self) -> Result<Vec<ReleaseInfo>, ReleaseError> {
+    pub async fn run_async(self) -> Result<Vec<ReleaseInfo>, ReleaseError> {
         let slug = self.repo_slug();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
@@ -24,9 +24,9 @@ impl<'a> ReleaseListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> ReleaseViewBuilder<'a> {
-    pub async fn run(self) -> Result<ReleaseInfo, ReleaseError> {
+    pub async fn run_async(self) -> Result<ReleaseInfo, ReleaseError> {
         let tag = self.tag().to_string();
         let slug = self.repo_slug();
         let cmd = self.build_command();
@@ -35,9 +35,9 @@ impl<'a> ReleaseViewBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> ReleaseDeleteBuilder<'a> {
-    pub async fn run(self) -> Result<(), ReleaseError> {
+    pub async fn run_async(self) -> Result<(), ReleaseError> {
         let tag = self.tag().to_string();
         let slug = self.repo_slug();
         let cmd = self.build_command();

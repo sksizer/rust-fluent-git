@@ -5,7 +5,7 @@ use crate::ops::formula::{
     parse_uninstall_output, parse_unlink_output, parse_unpin_output, parse_upgrade_output,
 };
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl InstallBuilder {
     pub fn run(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
@@ -15,7 +15,7 @@ impl InstallBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl UninstallBuilder {
     pub fn run(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
@@ -25,7 +25,7 @@ impl UninstallBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ReinstallBuilder {
     pub fn run(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
@@ -35,7 +35,7 @@ impl ReinstallBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl UpgradeBuilder {
     pub fn run(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
@@ -45,7 +45,7 @@ impl UpgradeBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl PinBuilder {
     pub fn run(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
@@ -55,7 +55,7 @@ impl PinBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl UnpinBuilder {
     pub fn run(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
@@ -65,7 +65,7 @@ impl UnpinBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl LinkBuilder {
     pub fn run(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
@@ -75,7 +75,7 @@ impl LinkBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl UnlinkBuilder {
     pub fn run(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();

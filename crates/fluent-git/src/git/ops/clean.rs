@@ -3,9 +3,9 @@ use crate::ops::CleanBuilder;
 use crate::ops::clean::parse_clean_output;
 use crate::types::CleanResult;
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> CleanBuilder<'a> {
-    pub async fn run(self) -> Result<CleanResult, CleanError> {
+    pub async fn run_async(self) -> Result<CleanResult, CleanError> {
         if !self.is_force() {
             return Err(CleanError::ForceRequired);
         }

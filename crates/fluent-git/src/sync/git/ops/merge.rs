@@ -4,7 +4,7 @@ use crate::ops::merge::{parse_merge_details, parse_merge_output};
 use crate::types::MergeResult;
 use fluent_core::stdout_string;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> MergeBuilder<'a> {
     pub fn run(self) -> Result<MergeResult, MergeError> {
         let cmd = self.build_merge_command();

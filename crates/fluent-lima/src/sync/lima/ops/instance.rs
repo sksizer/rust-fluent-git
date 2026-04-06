@@ -7,7 +7,7 @@ use crate::ops::instance::{
 };
 use crate::types::InstanceInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl CreateBuilder {
     pub fn run(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
@@ -17,7 +17,7 @@ impl CreateBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl StartBuilder {
     pub fn run(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
@@ -27,7 +27,7 @@ impl StartBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl StopBuilder {
     pub fn run(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
@@ -37,7 +37,7 @@ impl StopBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl RestartBuilder {
     pub fn run(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
@@ -47,7 +47,7 @@ impl RestartBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl DeleteBuilder {
     pub fn run(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
@@ -57,7 +57,7 @@ impl DeleteBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ListBuilder {
     pub fn run(self) -> Result<Vec<InstanceInfo>, InstanceError> {
         let cmd = self.build_command();
@@ -66,7 +66,7 @@ impl ListBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl CloneBuilder {
     pub fn run(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
@@ -76,7 +76,7 @@ impl CloneBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl RenameBuilder {
     pub fn run(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
@@ -86,7 +86,7 @@ impl RenameBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ProtectBuilder {
     pub fn run(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
@@ -96,7 +96,7 @@ impl ProtectBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl UnprotectBuilder {
     pub fn run(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();

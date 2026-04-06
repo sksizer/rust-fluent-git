@@ -5,9 +5,9 @@ use crate::ops::query::{
 };
 use crate::types::{InfoResponse, OutdatedResponse};
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl InfoBuilder {
-    pub async fn run(self) -> Result<InfoResponse, QueryError> {
+    pub async fn run_async(self) -> Result<InfoResponse, QueryError> {
         let cmd = self.build_command();
         let name = self.formula_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -15,36 +15,36 @@ impl InfoBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl SearchBuilder {
-    pub async fn run(self) -> Result<Vec<String>, QueryError> {
+    pub async fn run_async(self) -> Result<Vec<String>, QueryError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_search_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl ListBuilder {
-    pub async fn run(self) -> Result<Vec<String>, QueryError> {
+    pub async fn run_async(self) -> Result<Vec<String>, QueryError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_list_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl OutdatedBuilder {
-    pub async fn run(self) -> Result<OutdatedResponse, QueryError> {
+    pub async fn run_async(self) -> Result<OutdatedResponse, QueryError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_outdated_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl DepsBuilder {
-    pub async fn run(self) -> Result<Vec<String>, QueryError> {
+    pub async fn run_async(self) -> Result<Vec<String>, QueryError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_deps_output(&output)

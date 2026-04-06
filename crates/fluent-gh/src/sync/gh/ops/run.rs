@@ -3,7 +3,7 @@ use crate::ops::run::{parse_list_output, parse_rerun_output, parse_view_output, 
 use crate::ops::{RunListBuilder, RunRerunBuilder, RunViewBuilder, RunWatchBuilder};
 use crate::types::{RunInfo, RunRerunResult};
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RunListBuilder<'a> {
     pub fn run(self) -> Result<Vec<RunInfo>, RunError> {
         let slug = self.repo_slug();
@@ -13,7 +13,7 @@ impl<'a> RunListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RunViewBuilder<'a> {
     pub fn run(self) -> Result<RunInfo, RunError> {
         let id = self.id().to_string();
@@ -24,7 +24,7 @@ impl<'a> RunViewBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RunRerunBuilder<'a> {
     pub fn run(self) -> Result<RunRerunResult, RunError> {
         let id = self.id().to_string();
@@ -35,7 +35,7 @@ impl<'a> RunRerunBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RunWatchBuilder<'a> {
     pub fn run(self) -> Result<(), RunError> {
         let id = self.id().to_string();

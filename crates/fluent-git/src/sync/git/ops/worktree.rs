@@ -13,7 +13,7 @@ use crate::types::{
     WorktreeRemoveResult,
 };
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorktreeAddBuilder<'a> {
     pub fn run(self) -> Result<WorktreeAddResult, WorktreeError> {
         // Check if branch already exists
@@ -46,7 +46,7 @@ impl<'a> WorktreeAddBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorktreeRemoveBuilder<'a> {
     pub fn run(self) -> Result<WorktreeRemoveResult, WorktreeError> {
         // Get branch info before removing
@@ -62,7 +62,7 @@ impl<'a> WorktreeRemoveBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorktreeListBuilder<'a> {
     pub fn run(self) -> Result<WorktreeListResult, WorktreeError> {
         let cmd = self.build_command();
@@ -71,7 +71,7 @@ impl<'a> WorktreeListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorktreeMoveBuilder<'a> {
     pub fn run(self) -> Result<WorktreeMoveResult, WorktreeError> {
         // Get branch info before moving
@@ -91,7 +91,7 @@ impl<'a> WorktreeMoveBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorktreeLockBuilder<'a> {
     pub fn run(self) -> Result<WorktreeLockResult, WorktreeError> {
         let cmd = self.build_command();
@@ -100,7 +100,7 @@ impl<'a> WorktreeLockBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorktreeUnlockBuilder<'a> {
     pub fn run(self) -> Result<(), WorktreeError> {
         let cmd = self.build_command();
@@ -109,7 +109,7 @@ impl<'a> WorktreeUnlockBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorktreePruneBuilder<'a> {
     pub fn run(self) -> Result<WorktreePruneResult, WorktreeError> {
         // First dry-run to see what would be pruned

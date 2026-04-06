@@ -3,7 +3,7 @@ use crate::ops::label::{parse_create_output, parse_delete_output, parse_edit_out
 use crate::ops::{LabelCreateBuilder, LabelDeleteBuilder, LabelEditBuilder, LabelListBuilder};
 use crate::types::LabelInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> LabelCreateBuilder<'a> {
     pub fn run(self) -> Result<(), LabelError> {
         let name = self.name().to_string();
@@ -14,7 +14,7 @@ impl<'a> LabelCreateBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> LabelListBuilder<'a> {
     pub fn run(self) -> Result<Vec<LabelInfo>, LabelError> {
         let slug = self.repo_slug();
@@ -24,7 +24,7 @@ impl<'a> LabelListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> LabelEditBuilder<'a> {
     pub fn run(self) -> Result<(), LabelError> {
         let name = self.name().to_string();
@@ -35,7 +35,7 @@ impl<'a> LabelEditBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> LabelDeleteBuilder<'a> {
     pub fn run(self) -> Result<(), LabelError> {
         let name = self.name().to_string();

@@ -5,27 +5,27 @@ use crate::ops::issue::{
 use crate::ops::{IssueCloseBuilder, IssueCommentBuilder, IssueCreateBuilder, IssueListBuilder, IssueViewBuilder};
 use crate::types::{IssueCreateResult, IssueInfo};
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> IssueCreateBuilder<'a> {
-    pub async fn run(self) -> Result<IssueCreateResult, IssueError> {
+    pub async fn run_async(self) -> Result<IssueCreateResult, IssueError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_create_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> IssueListBuilder<'a> {
-    pub async fn run(self) -> Result<Vec<IssueInfo>, IssueError> {
+    pub async fn run_async(self) -> Result<Vec<IssueInfo>, IssueError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_list_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> IssueViewBuilder<'a> {
-    pub async fn run(self) -> Result<IssueInfo, IssueError> {
+    pub async fn run_async(self) -> Result<IssueInfo, IssueError> {
         let number = self.number();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
@@ -33,9 +33,9 @@ impl<'a> IssueViewBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> IssueCloseBuilder<'a> {
-    pub async fn run(self) -> Result<(), IssueError> {
+    pub async fn run_async(self) -> Result<(), IssueError> {
         let number = self.number();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
@@ -43,9 +43,9 @@ impl<'a> IssueCloseBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> IssueCommentBuilder<'a> {
-    pub async fn run(self) -> Result<(), IssueError> {
+    pub async fn run_async(self) -> Result<(), IssueError> {
         let number = self.number();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;

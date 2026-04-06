@@ -6,9 +6,9 @@ use crate::ops::pr::{
 use crate::ops::{PrCheckoutBuilder, PrCloseBuilder, PrCreateBuilder, PrListBuilder, PrMergeBuilder, PrViewBuilder};
 use crate::types::{PrCreateResult, PrInfo};
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> PrCreateBuilder<'a> {
-    pub async fn run(self) -> Result<PrCreateResult, PrError> {
+    pub async fn run_async(self) -> Result<PrCreateResult, PrError> {
         let slug = self.repo_slug();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
@@ -16,9 +16,9 @@ impl<'a> PrCreateBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> PrListBuilder<'a> {
-    pub async fn run(self) -> Result<Vec<PrInfo>, PrError> {
+    pub async fn run_async(self) -> Result<Vec<PrInfo>, PrError> {
         let slug = self.repo_slug();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
@@ -26,9 +26,9 @@ impl<'a> PrListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> PrViewBuilder<'a> {
-    pub async fn run(self) -> Result<PrInfo, PrError> {
+    pub async fn run_async(self) -> Result<PrInfo, PrError> {
         let number = self.number();
         let slug = self.repo_slug();
         let cmd = self.build_command();
@@ -37,9 +37,9 @@ impl<'a> PrViewBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> PrMergeBuilder<'a> {
-    pub async fn run(self) -> Result<(), PrError> {
+    pub async fn run_async(self) -> Result<(), PrError> {
         let number = self.number();
         let slug = self.repo_slug();
         let cmd = self.build_command();
@@ -48,9 +48,9 @@ impl<'a> PrMergeBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> PrCloseBuilder<'a> {
-    pub async fn run(self) -> Result<(), PrError> {
+    pub async fn run_async(self) -> Result<(), PrError> {
         let number = self.number();
         let slug = self.repo_slug();
         let cmd = self.build_command();
@@ -59,9 +59,9 @@ impl<'a> PrCloseBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> PrCheckoutBuilder<'a> {
-    pub async fn run(self) -> Result<(), PrError> {
+    pub async fn run_async(self) -> Result<(), PrError> {
         let slug = self.repo_slug();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;

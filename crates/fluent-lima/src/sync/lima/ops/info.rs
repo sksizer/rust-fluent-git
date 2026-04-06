@@ -2,7 +2,7 @@ use crate::error::InfoError;
 use crate::ops::info::{InfoBuilder, parse_info_output};
 use crate::types::SystemInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl InfoBuilder {
     pub fn run(self) -> Result<SystemInfo, InfoError> {
         let cmd = self.build_command();

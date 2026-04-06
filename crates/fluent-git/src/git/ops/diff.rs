@@ -3,9 +3,9 @@ use crate::ops::DiffBuilder;
 use crate::ops::diff::{build_diff_result, check_diff_errors, parse_numstat_output};
 use crate::types::DiffResult;
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> DiffBuilder<'a> {
-    pub async fn run(self) -> Result<DiffResult, DiffError> {
+    pub async fn run_async(self) -> Result<DiffResult, DiffError> {
         let numstat_cmd = self.build_numstat_command();
         let numstat_output = fluent_core::run_async(&numstat_cmd).await?;
         let ref_range = self.ref_range();

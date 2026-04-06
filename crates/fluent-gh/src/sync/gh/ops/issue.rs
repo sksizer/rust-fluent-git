@@ -5,7 +5,7 @@ use crate::ops::issue::{
 use crate::ops::{IssueCloseBuilder, IssueCommentBuilder, IssueCreateBuilder, IssueListBuilder, IssueViewBuilder};
 use crate::types::{IssueCreateResult, IssueInfo};
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> IssueCreateBuilder<'a> {
     pub fn run(self) -> Result<IssueCreateResult, IssueError> {
         let cmd = self.build_command();
@@ -14,7 +14,7 @@ impl<'a> IssueCreateBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> IssueListBuilder<'a> {
     pub fn run(self) -> Result<Vec<IssueInfo>, IssueError> {
         let cmd = self.build_command();
@@ -23,7 +23,7 @@ impl<'a> IssueListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> IssueViewBuilder<'a> {
     pub fn run(self) -> Result<IssueInfo, IssueError> {
         let number = self.number();
@@ -33,7 +33,7 @@ impl<'a> IssueViewBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> IssueCloseBuilder<'a> {
     pub fn run(self) -> Result<(), IssueError> {
         let number = self.number();
@@ -43,7 +43,7 @@ impl<'a> IssueCloseBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> IssueCommentBuilder<'a> {
     pub fn run(self) -> Result<(), IssueError> {
         let number = self.number();

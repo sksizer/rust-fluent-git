@@ -1,9 +1,9 @@
 use crate::error::TapError;
 use crate::ops::tap::{TapBuilder, UntapBuilder, parse_tap_output, parse_untap_output};
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl TapBuilder {
-    pub async fn run(self) -> Result<(), TapError> {
+    pub async fn run_async(self) -> Result<(), TapError> {
         let cmd = self.build_command();
         let name = self.tap_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -11,9 +11,9 @@ impl TapBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl UntapBuilder {
-    pub async fn run(self) -> Result<(), TapError> {
+    pub async fn run_async(self) -> Result<(), TapError> {
         let cmd = self.build_command();
         let name = self.tap_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;

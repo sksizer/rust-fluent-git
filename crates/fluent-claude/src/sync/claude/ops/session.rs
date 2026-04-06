@@ -3,7 +3,7 @@ use crate::ops::SessionResumeBuilder;
 use crate::ops::session::parse_resume_output;
 use crate::types::PromptResult;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl SessionResumeBuilder {
     pub fn run(self) -> Result<PromptResult, SessionError> {
         let cmd = self.build_command();

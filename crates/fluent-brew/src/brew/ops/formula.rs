@@ -5,9 +5,9 @@ use crate::ops::formula::{
     parse_uninstall_output, parse_unlink_output, parse_unpin_output, parse_upgrade_output,
 };
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl InstallBuilder {
-    pub async fn run(self) -> Result<(), FormulaError> {
+    pub async fn run_async(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
         let name = self.formula_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -15,9 +15,9 @@ impl InstallBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl UninstallBuilder {
-    pub async fn run(self) -> Result<(), FormulaError> {
+    pub async fn run_async(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
         let name = self.formula_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -25,9 +25,9 @@ impl UninstallBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl ReinstallBuilder {
-    pub async fn run(self) -> Result<(), FormulaError> {
+    pub async fn run_async(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
         let name = self.formula_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -35,9 +35,9 @@ impl ReinstallBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl UpgradeBuilder {
-    pub async fn run(self) -> Result<(), FormulaError> {
+    pub async fn run_async(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
         let name = self.formula_name().map(|s| s.to_string());
         let output = fluent_core::run_async(&cmd).await?;
@@ -45,9 +45,9 @@ impl UpgradeBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl PinBuilder {
-    pub async fn run(self) -> Result<(), FormulaError> {
+    pub async fn run_async(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
         let name = self.formula_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -55,9 +55,9 @@ impl PinBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl UnpinBuilder {
-    pub async fn run(self) -> Result<(), FormulaError> {
+    pub async fn run_async(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
         let name = self.formula_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -65,9 +65,9 @@ impl UnpinBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl LinkBuilder {
-    pub async fn run(self) -> Result<(), FormulaError> {
+    pub async fn run_async(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
         let name = self.formula_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -75,9 +75,9 @@ impl LinkBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl UnlinkBuilder {
-    pub async fn run(self) -> Result<(), FormulaError> {
+    pub async fn run_async(self) -> Result<(), FormulaError> {
         let cmd = self.build_command();
         let name = self.formula_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;

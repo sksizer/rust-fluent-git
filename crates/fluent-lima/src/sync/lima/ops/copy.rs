@@ -1,7 +1,7 @@
 use crate::error::CopyError;
 use crate::ops::copy::{CopyBuilder, parse_copy_output};
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl CopyBuilder {
     pub fn run(self) -> Result<(), CopyError> {
         let cmd = self.build_command();

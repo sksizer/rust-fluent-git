@@ -7,18 +7,18 @@ use crate::ops::services::{
 };
 use crate::types::ServiceInfo;
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl ServicesListBuilder {
-    pub async fn run(self) -> Result<Vec<ServiceInfo>, ServiceError> {
+    pub async fn run_async(self) -> Result<Vec<ServiceInfo>, ServiceError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_services_list_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl ServicesInfoBuilder {
-    pub async fn run(self) -> Result<Vec<ServiceInfo>, ServiceError> {
+    pub async fn run_async(self) -> Result<Vec<ServiceInfo>, ServiceError> {
         let cmd = self.build_command();
         let name = self.service_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -26,9 +26,9 @@ impl ServicesInfoBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl ServicesStartBuilder {
-    pub async fn run(self) -> Result<(), ServiceError> {
+    pub async fn run_async(self) -> Result<(), ServiceError> {
         let cmd = self.build_command();
         let name = self.service_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -36,9 +36,9 @@ impl ServicesStartBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl ServicesStopBuilder {
-    pub async fn run(self) -> Result<(), ServiceError> {
+    pub async fn run_async(self) -> Result<(), ServiceError> {
         let cmd = self.build_command();
         let name = self.service_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -46,9 +46,9 @@ impl ServicesStopBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl ServicesRestartBuilder {
-    pub async fn run(self) -> Result<(), ServiceError> {
+    pub async fn run_async(self) -> Result<(), ServiceError> {
         let cmd = self.build_command();
         let name = self.service_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -56,9 +56,9 @@ impl ServicesRestartBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl ServicesRunBuilder {
-    pub async fn run(self) -> Result<(), ServiceError> {
+    pub async fn run_async(self) -> Result<(), ServiceError> {
         let cmd = self.build_command();
         let name = self.service_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -66,9 +66,9 @@ impl ServicesRunBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl ServicesKillBuilder {
-    pub async fn run(self) -> Result<(), ServiceError> {
+    pub async fn run_async(self) -> Result<(), ServiceError> {
         let cmd = self.build_command();
         let name = self.service_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;

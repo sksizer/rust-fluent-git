@@ -3,7 +3,7 @@ use crate::ops::tag::{parse_create_output, parse_delete_output, parse_list_outpu
 use crate::ops::{TagCreateBuilder, TagDeleteBuilder, TagListBuilder};
 use crate::types::TagInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> TagCreateBuilder<'a> {
     pub fn run(self) -> Result<(), TagError> {
         let cmd = self.build_command();
@@ -12,7 +12,7 @@ impl<'a> TagCreateBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> TagDeleteBuilder<'a> {
     pub fn run(self) -> Result<(), TagError> {
         let cmd = self.build_command();
@@ -21,7 +21,7 @@ impl<'a> TagDeleteBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> TagListBuilder<'a> {
     pub fn run(self) -> Result<Vec<TagInfo>, TagError> {
         let cmd = self.build_command();

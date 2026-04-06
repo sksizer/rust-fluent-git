@@ -5,9 +5,9 @@ use crate::ops::disk::{
 };
 use crate::types::DiskInfo;
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl DiskCreateBuilder {
-    pub async fn run(self) -> Result<(), DiskError> {
+    pub async fn run_async(self) -> Result<(), DiskError> {
         let cmd = self.build_command();
         let name = self.disk_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -15,18 +15,18 @@ impl DiskCreateBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl DiskListBuilder {
-    pub async fn run(self) -> Result<Vec<DiskInfo>, DiskError> {
+    pub async fn run_async(self) -> Result<Vec<DiskInfo>, DiskError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_list_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl DiskDeleteBuilder {
-    pub async fn run(self) -> Result<(), DiskError> {
+    pub async fn run_async(self) -> Result<(), DiskError> {
         let cmd = self.build_command();
         let name = self.disk_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -34,9 +34,9 @@ impl DiskDeleteBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl DiskResizeBuilder {
-    pub async fn run(self) -> Result<(), DiskError> {
+    pub async fn run_async(self) -> Result<(), DiskError> {
         let cmd = self.build_command();
         let name = self.disk_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
