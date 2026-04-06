@@ -111,6 +111,20 @@ dependencies = [
  "fluent-gh",
  "fluent-git",
  "fluent-lima",
+ "fluent-wrangler",
+]
+
+[[package]]
+name = "fluent-wrangler"
+version = "0.1.0"
+dependencies = [
+ "cmd-spec",
+ "fluent-core",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "which",
 ]
 
 [[package]]
