@@ -2,7 +2,7 @@ use crate::error::ShellError;
 use crate::ops::shell::{ShellBuilder, parse_shell_output};
 use crate::types::ShellResult;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ShellBuilder {
     pub fn run(self) -> Result<ShellResult, ShellError> {
         let cmd = self.build_command();

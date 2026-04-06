@@ -7,7 +7,7 @@ use crate::ops::services::{
 };
 use crate::types::ServiceInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ServicesListBuilder {
     pub fn run(self) -> Result<Vec<ServiceInfo>, ServiceError> {
         let cmd = self.build_command();
@@ -16,7 +16,7 @@ impl ServicesListBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ServicesInfoBuilder {
     pub fn run(self) -> Result<Vec<ServiceInfo>, ServiceError> {
         let cmd = self.build_command();
@@ -26,7 +26,7 @@ impl ServicesInfoBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ServicesStartBuilder {
     pub fn run(self) -> Result<(), ServiceError> {
         let cmd = self.build_command();
@@ -36,7 +36,7 @@ impl ServicesStartBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ServicesStopBuilder {
     pub fn run(self) -> Result<(), ServiceError> {
         let cmd = self.build_command();
@@ -46,7 +46,7 @@ impl ServicesStopBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ServicesRestartBuilder {
     pub fn run(self) -> Result<(), ServiceError> {
         let cmd = self.build_command();
@@ -56,7 +56,7 @@ impl ServicesRestartBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ServicesRunBuilder {
     pub fn run(self) -> Result<(), ServiceError> {
         let cmd = self.build_command();
@@ -66,7 +66,7 @@ impl ServicesRunBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ServicesKillBuilder {
     pub fn run(self) -> Result<(), ServiceError> {
         let cmd = self.build_command();

@@ -2,7 +2,7 @@ use crate::error::CherryPickError;
 use crate::ops::CherryPickBuilder;
 use crate::ops::cherry_pick::parse_cherry_pick_output;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> CherryPickBuilder<'a> {
     pub fn run(self) -> Result<(), CherryPickError> {
         let cmd = self.build_command();

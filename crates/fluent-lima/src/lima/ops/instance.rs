@@ -7,9 +7,9 @@ use crate::ops::instance::{
 };
 use crate::types::InstanceInfo;
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl CreateBuilder {
-    pub async fn run(self) -> Result<(), InstanceError> {
+    pub async fn run_async(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
         let name = self.instance_name();
         let output = fluent_core::run_async(&cmd).await?;
@@ -17,9 +17,9 @@ impl CreateBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl StartBuilder {
-    pub async fn run(self) -> Result<(), InstanceError> {
+    pub async fn run_async(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
         let name = self.instance_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -27,9 +27,9 @@ impl StartBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl StopBuilder {
-    pub async fn run(self) -> Result<(), InstanceError> {
+    pub async fn run_async(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
         let name = self.instance_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -37,9 +37,9 @@ impl StopBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl RestartBuilder {
-    pub async fn run(self) -> Result<(), InstanceError> {
+    pub async fn run_async(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
         let name = self.instance_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -47,9 +47,9 @@ impl RestartBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl DeleteBuilder {
-    pub async fn run(self) -> Result<(), InstanceError> {
+    pub async fn run_async(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
         let name = self.instance_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -57,18 +57,18 @@ impl DeleteBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl ListBuilder {
-    pub async fn run(self) -> Result<Vec<InstanceInfo>, InstanceError> {
+    pub async fn run_async(self) -> Result<Vec<InstanceInfo>, InstanceError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_list_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl CloneBuilder {
-    pub async fn run(self) -> Result<(), InstanceError> {
+    pub async fn run_async(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
         let source = self.source_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -76,9 +76,9 @@ impl CloneBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl RenameBuilder {
-    pub async fn run(self) -> Result<(), InstanceError> {
+    pub async fn run_async(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
         let old = self.old_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -86,9 +86,9 @@ impl RenameBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl ProtectBuilder {
-    pub async fn run(self) -> Result<(), InstanceError> {
+    pub async fn run_async(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
         let name = self.instance_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;
@@ -96,9 +96,9 @@ impl ProtectBuilder {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl UnprotectBuilder {
-    pub async fn run(self) -> Result<(), InstanceError> {
+    pub async fn run_async(self) -> Result<(), InstanceError> {
         let cmd = self.build_command();
         let name = self.instance_name().to_string();
         let output = fluent_core::run_async(&cmd).await?;

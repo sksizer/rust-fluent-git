@@ -3,7 +3,7 @@ use crate::ops::AddBuilder;
 use crate::ops::add::{parse_add_output, parse_staged_files};
 use crate::types::AddResult;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> AddBuilder<'a> {
     pub fn run(self) -> Result<AddResult, AddError> {
         let add_cmd = self.build_add_command();

@@ -3,7 +3,7 @@ use crate::ops::StatusBuilder;
 use crate::ops::status::parse_status_output;
 use crate::types::StatusResult;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> StatusBuilder<'a> {
     pub fn run(self) -> Result<StatusResult, StatusError> {
         let cmd = self.build_command();

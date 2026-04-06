@@ -5,7 +5,7 @@ use crate::ops::disk::{
 };
 use crate::types::DiskInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl DiskCreateBuilder {
     pub fn run(self) -> Result<(), DiskError> {
         let cmd = self.build_command();
@@ -15,7 +15,7 @@ impl DiskCreateBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl DiskListBuilder {
     pub fn run(self) -> Result<Vec<DiskInfo>, DiskError> {
         let cmd = self.build_command();
@@ -24,7 +24,7 @@ impl DiskListBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl DiskDeleteBuilder {
     pub fn run(self) -> Result<(), DiskError> {
         let cmd = self.build_command();
@@ -34,7 +34,7 @@ impl DiskDeleteBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl DiskResizeBuilder {
     pub fn run(self) -> Result<(), DiskError> {
         let cmd = self.build_command();

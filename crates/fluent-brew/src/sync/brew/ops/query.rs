@@ -5,7 +5,7 @@ use crate::ops::query::{
 };
 use crate::types::{InfoResponse, OutdatedResponse};
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl InfoBuilder {
     pub fn run(self) -> Result<InfoResponse, QueryError> {
         let cmd = self.build_command();
@@ -15,7 +15,7 @@ impl InfoBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl SearchBuilder {
     pub fn run(self) -> Result<Vec<String>, QueryError> {
         let cmd = self.build_command();
@@ -24,7 +24,7 @@ impl SearchBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl ListBuilder {
     pub fn run(self) -> Result<Vec<String>, QueryError> {
         let cmd = self.build_command();
@@ -33,7 +33,7 @@ impl ListBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl OutdatedBuilder {
     pub fn run(self) -> Result<OutdatedResponse, QueryError> {
         let cmd = self.build_command();
@@ -42,7 +42,7 @@ impl OutdatedBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl DepsBuilder {
     pub fn run(self) -> Result<Vec<String>, QueryError> {
         let cmd = self.build_command();

@@ -6,7 +6,7 @@ use crate::ops::pr::{
 use crate::ops::{PrCheckoutBuilder, PrCloseBuilder, PrCreateBuilder, PrListBuilder, PrMergeBuilder, PrViewBuilder};
 use crate::types::{PrCreateResult, PrInfo};
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> PrCreateBuilder<'a> {
     pub fn run(self) -> Result<PrCreateResult, PrError> {
         let slug = self.repo_slug();
@@ -16,7 +16,7 @@ impl<'a> PrCreateBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> PrListBuilder<'a> {
     pub fn run(self) -> Result<Vec<PrInfo>, PrError> {
         let slug = self.repo_slug();
@@ -26,7 +26,7 @@ impl<'a> PrListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> PrViewBuilder<'a> {
     pub fn run(self) -> Result<PrInfo, PrError> {
         let number = self.number();
@@ -37,7 +37,7 @@ impl<'a> PrViewBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> PrMergeBuilder<'a> {
     pub fn run(self) -> Result<(), PrError> {
         let number = self.number();
@@ -48,7 +48,7 @@ impl<'a> PrMergeBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> PrCloseBuilder<'a> {
     pub fn run(self) -> Result<(), PrError> {
         let number = self.number();
@@ -59,7 +59,7 @@ impl<'a> PrCloseBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> PrCheckoutBuilder<'a> {
     pub fn run(self) -> Result<(), PrError> {
         let slug = self.repo_slug();

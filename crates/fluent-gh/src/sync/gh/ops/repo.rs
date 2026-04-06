@@ -3,7 +3,7 @@ use crate::ops::repo::{parse_clone_output, parse_create_output, parse_fork_outpu
 use crate::ops::{RepoCloneBuilder, RepoCreateBuilder, RepoForkBuilder, RepoViewBuilder};
 use crate::types::{RepoCreateResult, RepoInfo};
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RepoViewBuilder<'a> {
     pub fn run(self) -> Result<RepoInfo, RepoError> {
         let cmd = self.build_command();
@@ -12,7 +12,7 @@ impl<'a> RepoViewBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RepoCloneBuilder<'a> {
     pub fn run(self) -> Result<(), RepoError> {
         let slug = self.repo_slug();
@@ -22,7 +22,7 @@ impl<'a> RepoCloneBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RepoCreateBuilder<'a> {
     pub fn run(self) -> Result<RepoCreateResult, RepoError> {
         let slug = self.repo_slug();
@@ -32,7 +32,7 @@ impl<'a> RepoCreateBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RepoForkBuilder<'a> {
     pub fn run(self) -> Result<(), RepoError> {
         let slug = self.repo_slug();

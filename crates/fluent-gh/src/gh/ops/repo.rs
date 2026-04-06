@@ -3,18 +3,18 @@ use crate::ops::repo::{parse_clone_output, parse_create_output, parse_fork_outpu
 use crate::ops::{RepoCloneBuilder, RepoCreateBuilder, RepoForkBuilder, RepoViewBuilder};
 use crate::types::{RepoCreateResult, RepoInfo};
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> RepoViewBuilder<'a> {
-    pub async fn run(self) -> Result<RepoInfo, RepoError> {
+    pub async fn run_async(self) -> Result<RepoInfo, RepoError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_view_output(&output, "")
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> RepoCloneBuilder<'a> {
-    pub async fn run(self) -> Result<(), RepoError> {
+    pub async fn run_async(self) -> Result<(), RepoError> {
         let slug = self.repo_slug();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
@@ -22,9 +22,9 @@ impl<'a> RepoCloneBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> RepoCreateBuilder<'a> {
-    pub async fn run(self) -> Result<RepoCreateResult, RepoError> {
+    pub async fn run_async(self) -> Result<RepoCreateResult, RepoError> {
         let slug = self.repo_slug();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
@@ -32,9 +32,9 @@ impl<'a> RepoCreateBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> RepoForkBuilder<'a> {
-    pub async fn run(self) -> Result<(), RepoError> {
+    pub async fn run_async(self) -> Result<(), RepoError> {
         let slug = self.repo_slug();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;

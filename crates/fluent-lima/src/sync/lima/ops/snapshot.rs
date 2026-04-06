@@ -5,7 +5,7 @@ use crate::ops::snapshot::{
 };
 use crate::types::SnapshotInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl SnapshotCreateBuilder {
     pub fn run(self) -> Result<(), SnapshotError> {
         let cmd = self.build_command();
@@ -14,7 +14,7 @@ impl SnapshotCreateBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl SnapshotApplyBuilder {
     pub fn run(self) -> Result<(), SnapshotError> {
         let cmd = self.build_command();
@@ -23,7 +23,7 @@ impl SnapshotApplyBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl SnapshotDeleteBuilder {
     pub fn run(self) -> Result<(), SnapshotError> {
         let cmd = self.build_command();
@@ -32,7 +32,7 @@ impl SnapshotDeleteBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl SnapshotListBuilder {
     pub fn run(self) -> Result<Vec<SnapshotInfo>, SnapshotError> {
         let cmd = self.build_command();

@@ -3,9 +3,9 @@ use crate::ops::AddBuilder;
 use crate::ops::add::{parse_add_output, parse_staged_files};
 use crate::types::AddResult;
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> AddBuilder<'a> {
-    pub async fn run(self) -> Result<AddResult, AddError> {
+    pub async fn run_async(self) -> Result<AddResult, AddError> {
         let add_cmd = self.build_add_command();
         let output = fluent_core::run_async(&add_cmd).await?;
         parse_add_output(&output, self.paths_ref())?;

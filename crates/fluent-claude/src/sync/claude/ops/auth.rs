@@ -3,7 +3,7 @@ use crate::ops::AuthStatusBuilder;
 use crate::ops::auth::parse_status_output;
 use crate::types::AuthStatus;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl AuthStatusBuilder {
     pub fn run(self) -> Result<AuthStatus, AuthError> {
         let cmd = self.build_command();

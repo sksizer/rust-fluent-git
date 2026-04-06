@@ -13,9 +13,9 @@ use crate::types::{
     WorktreeRemoveResult,
 };
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorktreeAddBuilder<'a> {
-    pub async fn run(self) -> Result<WorktreeAddResult, WorktreeError> {
+    pub async fn run_async(self) -> Result<WorktreeAddResult, WorktreeError> {
         // Check if branch already exists
         let check_cmd = self.build_branch_check_command();
         let check_output = fluent_core::run_async(&check_cmd).await?;
@@ -46,9 +46,9 @@ impl<'a> WorktreeAddBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorktreeRemoveBuilder<'a> {
-    pub async fn run(self) -> Result<WorktreeRemoveResult, WorktreeError> {
+    pub async fn run_async(self) -> Result<WorktreeRemoveResult, WorktreeError> {
         // Get branch info before removing
         let list_cmd = build_list_command(self.repo_path());
         let list_output = fluent_core::run_async(&list_cmd).await?;
@@ -62,18 +62,18 @@ impl<'a> WorktreeRemoveBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorktreeListBuilder<'a> {
-    pub async fn run(self) -> Result<WorktreeListResult, WorktreeError> {
+    pub async fn run_async(self) -> Result<WorktreeListResult, WorktreeError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_list_output(&output)
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorktreeMoveBuilder<'a> {
-    pub async fn run(self) -> Result<WorktreeMoveResult, WorktreeError> {
+    pub async fn run_async(self) -> Result<WorktreeMoveResult, WorktreeError> {
         // Get branch info before moving
         let list_cmd = build_list_command(self.repo_path());
         let list_output = fluent_core::run_async(&list_cmd).await?;
@@ -91,27 +91,27 @@ impl<'a> WorktreeMoveBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorktreeLockBuilder<'a> {
-    pub async fn run(self) -> Result<WorktreeLockResult, WorktreeError> {
+    pub async fn run_async(self) -> Result<WorktreeLockResult, WorktreeError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_lock_output(&output, self.path(), self.reason_ref())
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorktreeUnlockBuilder<'a> {
-    pub async fn run(self) -> Result<(), WorktreeError> {
+    pub async fn run_async(self) -> Result<(), WorktreeError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_unlock_output(&output, self.path())
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> WorktreePruneBuilder<'a> {
-    pub async fn run(self) -> Result<WorktreePruneResult, WorktreeError> {
+    pub async fn run_async(self) -> Result<WorktreePruneResult, WorktreeError> {
         // First dry-run to see what would be pruned
         let dry_cmd = self.build_dry_run_command();
         let dry_output = fluent_core::run_async(&dry_cmd).await?;

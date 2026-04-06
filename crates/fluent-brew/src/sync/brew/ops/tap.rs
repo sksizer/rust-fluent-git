@@ -1,7 +1,7 @@
 use crate::error::TapError;
 use crate::ops::tap::{TapBuilder, UntapBuilder, parse_tap_output, parse_untap_output};
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl TapBuilder {
     pub fn run(self) -> Result<(), TapError> {
         let cmd = self.build_command();
@@ -11,7 +11,7 @@ impl TapBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl UntapBuilder {
     pub fn run(self) -> Result<(), TapError> {
         let cmd = self.build_command();

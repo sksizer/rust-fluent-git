@@ -43,8 +43,8 @@ use fluent_git::git::{init, open};
 
 let result = init(Path::new("/tmp/repo")).run().await?;
 let repo = result.into_repo();
-repo.add().all().run().await?;
-repo.commit().message("async commit").run().await?;
+repo.add().all().run_async().await?;
+repo.commit().message("async commit").run_async().await?;
 ```
 
 ### Error handling

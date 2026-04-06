@@ -3,9 +3,9 @@ use crate::ops::secret::{parse_delete_output, parse_list_output, parse_set_outpu
 use crate::ops::{SecretDeleteBuilder, SecretListBuilder, SecretSetBuilder};
 use crate::types::SecretInfo;
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> SecretSetBuilder<'a> {
-    pub async fn run(self) -> Result<(), SecretError> {
+    pub async fn run_async(self) -> Result<(), SecretError> {
         let name = self.name().to_string();
         let slug = self.repo_slug();
         let cmd = self.build_command();
@@ -14,9 +14,9 @@ impl<'a> SecretSetBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> SecretListBuilder<'a> {
-    pub async fn run(self) -> Result<Vec<SecretInfo>, SecretError> {
+    pub async fn run_async(self) -> Result<Vec<SecretInfo>, SecretError> {
         let slug = self.repo_slug();
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
@@ -24,9 +24,9 @@ impl<'a> SecretListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> SecretDeleteBuilder<'a> {
-    pub async fn run(self) -> Result<(), SecretError> {
+    pub async fn run_async(self) -> Result<(), SecretError> {
         let name = self.name().to_string();
         let slug = self.repo_slug();
         let cmd = self.build_command();

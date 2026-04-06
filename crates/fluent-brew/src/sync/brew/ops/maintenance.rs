@@ -4,7 +4,7 @@ use crate::ops::maintenance::{
     parse_doctor_output, parse_update_output,
 };
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl UpdateBuilder {
     pub fn run(self) -> Result<(), MaintenanceError> {
         let cmd = self.build_command();
@@ -13,7 +13,7 @@ impl UpdateBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl CleanupBuilder {
     pub fn run(self) -> Result<(), MaintenanceError> {
         let cmd = self.build_command();
@@ -22,7 +22,7 @@ impl CleanupBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl AutoremoveBuilder {
     pub fn run(self) -> Result<(), MaintenanceError> {
         let cmd = self.build_command();
@@ -31,7 +31,7 @@ impl AutoremoveBuilder {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl DoctorBuilder {
     pub fn run(self) -> Result<String, MaintenanceError> {
         let cmd = self.build_command();

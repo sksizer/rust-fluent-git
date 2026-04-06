@@ -7,7 +7,7 @@ use crate::ops::{
 };
 use crate::types::WorkflowInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorkflowListBuilder<'a> {
     pub fn run(self) -> Result<Vec<WorkflowInfo>, WorkflowError> {
         let slug = self.repo_slug();
@@ -17,7 +17,7 @@ impl<'a> WorkflowListBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorkflowViewBuilder<'a> {
     pub fn run(self) -> Result<WorkflowInfo, WorkflowError> {
         let id = self.id().to_string();
@@ -28,7 +28,7 @@ impl<'a> WorkflowViewBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorkflowRunBuilder<'a> {
     pub fn run(self) -> Result<(), WorkflowError> {
         let id = self.id().to_string();
@@ -39,7 +39,7 @@ impl<'a> WorkflowRunBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorkflowEnableBuilder<'a> {
     pub fn run(self) -> Result<(), WorkflowError> {
         let id = self.id().to_string();
@@ -50,7 +50,7 @@ impl<'a> WorkflowEnableBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> WorkflowDisableBuilder<'a> {
     pub fn run(self) -> Result<(), WorkflowError> {
         let id = self.id().to_string();

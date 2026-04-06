@@ -3,7 +3,7 @@ use crate::ops::CommitBuilder;
 use crate::ops::commit::{parse_commit_details, parse_commit_output};
 use crate::types::CommitResult;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> CommitBuilder<'a> {
     pub fn run(self) -> Result<CommitResult, CommitError> {
         let cmd = self.build_commit_command();

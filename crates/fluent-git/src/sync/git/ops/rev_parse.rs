@@ -2,7 +2,7 @@ use crate::error::RevParseError;
 use crate::ops::RevParseBuilder;
 use crate::ops::rev_parse::parse_rev_parse_output;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RevParseBuilder<'a> {
     pub fn run(self) -> Result<String, RevParseError> {
         let cmd = self.build_command();

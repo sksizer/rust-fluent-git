@@ -3,27 +3,27 @@ use crate::ops::tag::{parse_create_output, parse_delete_output, parse_list_outpu
 use crate::ops::{TagCreateBuilder, TagDeleteBuilder, TagListBuilder};
 use crate::types::TagInfo;
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> TagCreateBuilder<'a> {
-    pub async fn run(self) -> Result<(), TagError> {
+    pub async fn run_async(self) -> Result<(), TagError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_create_output(&output, self.name())
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> TagDeleteBuilder<'a> {
-    pub async fn run(self) -> Result<(), TagError> {
+    pub async fn run_async(self) -> Result<(), TagError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_delete_output(&output, self.name())
     }
 }
 
-#[cfg(not(feature = "blocking"))]
+#[cfg(feature = "tokio")]
 impl<'a> TagListBuilder<'a> {
-    pub async fn run(self) -> Result<Vec<TagInfo>, TagError> {
+    pub async fn run_async(self) -> Result<Vec<TagInfo>, TagError> {
         let cmd = self.build_command();
         let output = fluent_core::run_async(&cmd).await?;
         parse_list_output(&output)

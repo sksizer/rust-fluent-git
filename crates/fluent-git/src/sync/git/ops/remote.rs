@@ -3,7 +3,7 @@ use crate::ops::remote::{parse_add_output, parse_list_output, parse_remove_outpu
 use crate::ops::{RemoteAddBuilder, RemoteListBuilder, RemoteRemoveBuilder};
 use crate::types::RemoteInfo;
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RemoteAddBuilder<'a> {
     pub fn run(self) -> Result<(), RemoteError> {
         let cmd = self.build_command();
@@ -12,7 +12,7 @@ impl<'a> RemoteAddBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RemoteRemoveBuilder<'a> {
     pub fn run(self) -> Result<(), RemoteError> {
         let cmd = self.build_command();
@@ -21,7 +21,7 @@ impl<'a> RemoteRemoveBuilder<'a> {
     }
 }
 
-#[cfg(not(feature = "tokio"))]
+#[cfg(feature = "blocking")]
 impl<'a> RemoteListBuilder<'a> {
     pub fn run(self) -> Result<Vec<RemoteInfo>, RemoteError> {
         let cmd = self.build_command();
