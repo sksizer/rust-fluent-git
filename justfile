@@ -22,15 +22,25 @@ default:
 build:
     cargo build --workspace
 
-# Run all code checks
-full-check:
+# Check code formatting
+format-check:
     cargo fmt --all --check
+
+# Format code
+format:
+    cargo fmt --all
+alias fmt := format
+
+# Run clippy lints
+lint:
     cargo clippy --workspace -- --deny warnings
+
+# Run all code checks
+full-check: format-check lint
 alias fc := full-check
 
-# Auto-fix formatting
-full-write:
-    cargo fmt --all
+# Fix formatting (alias for format)
+full-write: format
 alias fw := full-write
 
 # Run sync (blocking) tests
@@ -43,6 +53,29 @@ test-async:
 
 # Run both sync and async tests
 test-all: test test-async
+
+# Run the same checks CI runs locally (full-check + tests)
+ci: full-check test
+
+# Build API docs (no deps)
+doc:
+    cargo doc --no-deps
+
+# Build API docs and open in the browser
+doc-open:
+    cargo doc --no-deps --open
+
+# List dependencies with newer versions available (requires cargo-outdated)
+outdated:
+    cargo outdated
+
+# Check dependencies for known security advisories (requires cargo-audit)
+audit:
+    cargo audit
+
+# Install optional cargo tools used by other recipes (cargo-outdated, cargo-audit)
+install-tools:
+    cargo install --locked cargo-outdated cargo-audit
 
 # ---------------------------------------------------------------------------- #
 #                                   RELEASE                                    #
@@ -100,3 +133,31 @@ alias cu := cargo-update
 cargo-update-all *args:
     bash scripts/cargo_update_all.sh {{args}}
 alias cua := cargo-update-all
+
+# ---------------------------------------------------------------------------- #
+#                             TEMPLATE REVIEW                                  #
+# ---------------------------------------------------------------------------- #
+
+# Review a downstream project for improvements to backport into the template (dry-run by default; --execute to run, optional target dir)
+template-review *args:
+    bash scripts/template_review.sh {{args}}
+alias tr := template-review
+
+# Review all downstream projects in parallel for backport candidates (dry-run by default; --execute to run)
+template-review-all *args:
+    bash scripts/template_review_all.sh {{args}}
+alias tra := template-review-all
+
+# ---------------------------------------------------------------------------- #
+#                            TEMPLATE BACKPORT                                 #
+# ---------------------------------------------------------------------------- #
+
+# Backport improvements from a downstream project into a fresh template clone and open a PR (dry-run by default; --execute to run)
+template-backport *args:
+    bash scripts/template_backport.sh {{args}}
+alias tb := template-backport
+
+# Backport improvements from all downstream projects, one PR each (dry-run by default; --execute to run)
+template-backport-all *args:
+    bash scripts/template_backport_all.sh {{args}}
+alias tba := template-backport-all

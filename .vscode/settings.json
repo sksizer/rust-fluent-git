@@ -8,5 +8,5 @@
   "rust-analyzer.inlayHints.chainingHints.enable": true,
   "rust-analyzer.inlayHints.parameterHints.enable": true,
   "rust-analyzer.inlayHints.typeHints.enable": true,
-  "rust-analyzer.rustfmt.extraArgs": []
+  "rust-analyzer.rustfmt.extraArgs": ["+nightly"]
 }
