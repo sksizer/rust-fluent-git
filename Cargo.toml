@@ -20,4 +20,5 @@ fluent-gh = { path = "crates/fluent-gh" }
 fluent-git = { path = "crates/fluent-git" }
 fluent-lima = { path = "crates/fluent-lima" }
 fluent-brew = { path = "crates/fluent-brew" }
+fluent-wrangler = { path = "crates/fluent-wrangler" }
 fluent-sdlc = { path = "crates/fluent-sdlc" }

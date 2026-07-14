@@ -14,3 +14,6 @@ pub use fluent_git as git;
 
 #[cfg(feature = "lima")]
 pub use fluent_lima as lima;
+
+#[cfg(feature = "wrangler")]
+pub use fluent_wrangler as wrangler;
